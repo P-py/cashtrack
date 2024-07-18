@@ -9,7 +9,6 @@ import com.pedrosant.cashtrack.models.Income
 import com.pedrosant.cashtrack.models.User
 import org.springframework.stereotype.Service
 import java.util.stream.Collectors
-import kotlin.math.exp
 
 @Service
 class UserService(
@@ -26,10 +25,11 @@ class UserService(
             .findFirst().get()
         return mapper.mapView(result)
     }
-    fun registerNewUser(newUser:UserEntry) {
+    fun registerNewUser(newUser:UserEntry):UserView{
         val new = mapper.mapEntry(newUser)
         new.id = (users.size+1).toLong()
         users = users.plus(new)
+        return mapper.mapView(new)
     }
     fun getBalance(userId:Long):Double {
         var totalIncome = 0.0
@@ -58,7 +58,7 @@ class UserService(
         val newExpenseList = user.expenseList.plus(newExpense)
         user.expenseList = newExpenseList
     }
-    fun updateUser(updatedUser:UserUpdate) {
+    fun updateUser(updatedUser:UserUpdate):UserView{
         val current = users.stream().filter {
             u -> u.id == updatedUser.userId
         }.findFirst().get()
@@ -70,5 +70,40 @@ class UserService(
             incomeList = current.incomeList
         )
         users = users.minus(current).plus(update)
+        return mapper.mapView(update)
+    }
+    fun updateExpense(updatedExpense:Expense, currentExpense:Expense){
+        val user = users.stream().filter {
+            u -> u.id == updatedExpense.userId
+        }.findFirst().get()
+        val updatedExpenseList = user.expenseList
+            .minus(currentExpense)
+            .plus(updatedExpense)
+        user.expenseList = updatedExpenseList
+    }
+    fun updatedIncome(updatedIncome:Income, currentIncome:Income) {
+        val user = users.stream().filter {
+                u -> u.id == updatedIncome.userId
+        }.findFirst().get()
+        val updatedIncomeList = user.incomeList
+            .minus(currentIncome)
+            .plus(updatedIncome)
+        user.incomeList = updatedIncomeList
+    }
+    fun delete(id:Long){
+        val deletedUser = users.stream().filter { u -> u.id == id }
+            .findFirst()
+            .get()
+        users = users.minus(deletedUser)
+    }
+    fun deleteExpense(deletedExpense:Expense) {
+        val user = users.stream().filter { u -> u.id == deletedExpense.userId }
+            .findFirst().get()
+        user.expenseList = user.expenseList.minus(deletedExpense)
+    }
+    fun deleteIncome(deletedIncome:Income){
+        val user = users.stream().filter { u -> u.id == deletedIncome.userId }
+            .findFirst().get()
+        user.incomeList = user.incomeList.minus(deletedIncome)
     }
 }

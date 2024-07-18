@@ -30,13 +30,14 @@ class ExpenseService(
                 e -> mapper.mapView(e)
             }
     }
-    fun register(newExpense:ExpenseEntry) {
+    fun register(newExpense:ExpenseEntry):ExpenseView{
         val newEntry = mapper.mapEntry(newExpense)
         newEntry.id = (expenses.size+1).toLong()
-        expenses = expenses.plus(mapper.mapEntry(newExpense))
+        expenses = expenses.plus(newEntry)
         userService.addExpense(newEntry, newEntry.userId)
+        return mapper.mapView(newEntry)
     }
-    fun update(updatedExpense:ExpenseUpdate){
+    fun update(updatedExpense:ExpenseUpdate):ExpenseView{
         val current = expenses.stream().filter{ e -> e.id == updatedExpense.id }
             .findFirst().get()
         val update = Expense(
@@ -46,5 +47,15 @@ class ExpenseService(
             type = updatedExpense.type,
             userId = current.userId
         )
+        expenses = expenses.minus(current).plus(update)
+        userService.updateExpense(update, current)
+        return mapper.mapView(update)
+    }
+    fun delete(id:Long) {
+        val deletedExpense = expenses.stream().filter { e -> e.id == id }
+            .findFirst()
+            .get()
+        expenses = expenses.minus(deletedExpense)
+        userService.deleteExpense(deletedExpense)
     }
 }

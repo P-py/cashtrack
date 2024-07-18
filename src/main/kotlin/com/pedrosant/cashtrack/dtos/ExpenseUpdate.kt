@@ -1,8 +1,8 @@
 package com.pedrosant.cashtrack.dtos
 
 import com.pedrosant.cashtrack.models.ExpenseType
-import jakarta.validation.constraints.NotEmpty
-import jakarta.validation.constraints.Size
+import javax.validation.constraints.NotEmpty
+import javax.validation.constraints.Size
 import javax.validation.constraints.NotNull
 
 data class ExpenseUpdate(
@@ -14,5 +14,5 @@ data class ExpenseUpdate(
     @field:NotNull
     val value:Double,
     @field:NotEmpty
-    val type: ExpenseType
+    val type:ExpenseType
 )

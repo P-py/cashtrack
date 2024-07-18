@@ -4,6 +4,7 @@ import com.pedrosant.cashtrack.models.IncomeType
 import java.time.LocalDateTime
 
 data class IncomeView(
+    val id:Long?,
     val incomeLabel:String,
     val value:Double,
     val type:IncomeType,

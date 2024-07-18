@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component
 class UserMapper:Mapper<User, UserView, UserEntry>{
     override fun mapView(c:User):UserView {
         return UserView(
+            id = c.id,
             username = c.username
         )
     }

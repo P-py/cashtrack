@@ -18,6 +18,7 @@ class ExpenseMapper():Mapper<Expense, ExpenseView, ExpenseEntry> {
     }
     override fun mapView(c:Expense):ExpenseView {
         return ExpenseView(
+            id = c.id,
             expenseLabel = c.expenseLabel,
             value = c.value,
             type = c.type,

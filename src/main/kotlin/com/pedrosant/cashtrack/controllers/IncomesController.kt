@@ -1,16 +1,22 @@
 package com.pedrosant.cashtrack.controllers
 
 import com.pedrosant.cashtrack.dtos.IncomeEntry
+import com.pedrosant.cashtrack.dtos.IncomeUpdate
 import com.pedrosant.cashtrack.dtos.IncomeView
-import com.pedrosant.cashtrack.models.Income
 import com.pedrosant.cashtrack.services.IncomeService
 import jakarta.validation.Valid
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/incomes")
@@ -28,7 +34,24 @@ class IncomesController(private val service:IncomeService){
         return service.getIncomesByUser(userId)
     }
     @PostMapping
-    fun register(@RequestBody @Valid newIncome:IncomeEntry){
-        service.register(newIncome)
+    fun register(
+            @RequestBody @Valid newIncome:IncomeEntry,
+            uriBuilder:UriComponentsBuilder
+        ):ResponseEntity<IncomeView>{
+        val createdIncome = service.register(newIncome)
+        val uri = uriBuilder.path("/incomes/${createdIncome.id}")
+            .build()
+            .toUri()
+        return ResponseEntity.created(uri).body(createdIncome)
+    }
+    @PutMapping
+    fun updated(@RequestBody @Valid updatedIncome:IncomeUpdate):ResponseEntity<IncomeView>{
+        val updateView = service.update(updatedIncome)
+        return ResponseEntity.ok(updateView)
+    }
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    fun delete(@PathVariable id:Long){
+        service.delete(id)
     }
 }

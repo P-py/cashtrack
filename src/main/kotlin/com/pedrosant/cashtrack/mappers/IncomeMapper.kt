@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component
 class IncomeMapper:Mapper<Income, IncomeView, IncomeEntry> {
     override fun mapView(c:Income):IncomeView {
         return IncomeView(
+            id = c.id,
             incomeLabel = c.incomeLabel,
             value = c.value,
             type = c.type,
