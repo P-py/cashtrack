@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    driverClassName: org.postgresql.driver
+    url: ${POSTGRES_DATABASE_URL}
+    username: ${POSTGRES_DATABASE_USERNAME}
+    password: ${POSTGRES_DATABASE_PASSWORD}
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
