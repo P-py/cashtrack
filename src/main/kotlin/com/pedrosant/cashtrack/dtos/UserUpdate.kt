@@ -1,16 +1,19 @@
 package com.pedrosant.cashtrack.dtos
 
-import javax.validation.constraints.NotEmpty
-import javax.validation.constraints.NotNull
-import javax.validation.constraints.Size
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotEmpty
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Size
 
 data class UserUpdate(
-    @field:NotNull
+    @field:NotNull(message = "Update target user must be specified.")
     val userId:Long,
-    @field:NotEmpty
-    @field:Size(min = 3, max = 40)
+    @field:NotEmpty(message = "New username cannot be empty.")
+    @field:NotBlank(message = "New username cannot be empty.")
+    @field:Size(min = 3, max = 40, message = "Username size must be between 3 and 40 characters.")
     val username:String,
-    @field:NotEmpty
-    @field:Size(min = 5, max = 100)
+    @field:NotEmpty(message = "New email must not be empty.")
+    @field:NotBlank(message = "New email cannot be empty.")
+    @field:Size(min = 5, max = 100, message = "Email size must be between 5 and 100 characters.")
     val email:String
 )

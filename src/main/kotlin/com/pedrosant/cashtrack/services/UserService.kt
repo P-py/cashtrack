@@ -3,6 +3,7 @@ package com.pedrosant.cashtrack.services
 import com.pedrosant.cashtrack.dtos.UserEntry
 import com.pedrosant.cashtrack.dtos.UserUpdate
 import com.pedrosant.cashtrack.dtos.UserView
+import com.pedrosant.cashtrack.exceptions.NotFoundException
 import com.pedrosant.cashtrack.mappers.UserMapper
 import com.pedrosant.cashtrack.models.Expense
 import com.pedrosant.cashtrack.models.Income
@@ -13,7 +14,8 @@ import java.util.stream.Collectors
 @Service
 class UserService(
     private var users:List<User> = ArrayList(),
-    private val mapper:UserMapper
+    private val mapper:UserMapper,
+    private val notFoundMessage:String = "Oh, something went wrong!! User not found!"
     ){
     fun getUsers():List<UserView>{
         return users.stream().map{
@@ -22,7 +24,7 @@ class UserService(
     }
     fun getUserById(id:Long): UserView {
         val result = users.stream().filter{ u -> u.id == id }
-            .findFirst().get()
+            .findFirst().orElseThrow{ NotFoundException(notFoundMessage) }
         return mapper.mapView(result)
     }
     fun registerNewUser(newUser:UserEntry):UserView{
@@ -35,7 +37,7 @@ class UserService(
         var totalIncome = 0.0
         var totalExpense = 0.0
         val result = users.stream().filter{ u -> u.id == userId }
-            .findFirst().get()
+            .findFirst().orElseThrow{ NotFoundException(notFoundMessage) }
         result.expenseList.forEach {
             e -> totalExpense += e.value
         }
@@ -47,21 +49,21 @@ class UserService(
     fun addIncome(newIncome:Income, userId:Long){
         val user = users.stream().filter{ u -> u.id == userId }
             .findFirst()
-            .get()
+            .orElseThrow{ NotFoundException(notFoundMessage) }
         val newIncomeList = user.incomeList.plus(newIncome)
         user.incomeList = newIncomeList
     }
     fun addExpense(newExpense:Expense, userId:Long){
         val user = users.stream().filter{ u -> u.id == userId }
             .findFirst()
-            .get()
+            .orElseThrow{ NotFoundException(notFoundMessage) }
         val newExpenseList = user.expenseList.plus(newExpense)
         user.expenseList = newExpenseList
     }
     fun updateUser(updatedUser:UserUpdate):UserView{
         val current = users.stream().filter {
             u -> u.id == updatedUser.userId
-        }.findFirst().get()
+        }.findFirst().orElseThrow{ NotFoundException(notFoundMessage) }
         val update = User(
             id = current.id,
             username = updatedUser.username,
@@ -75,7 +77,7 @@ class UserService(
     fun updateExpense(updatedExpense:Expense, currentExpense:Expense){
         val user = users.stream().filter {
             u -> u.id == updatedExpense.userId
-        }.findFirst().get()
+        }.findFirst().orElseThrow{ NotFoundException(notFoundMessage) }
         val updatedExpenseList = user.expenseList
             .minus(currentExpense)
             .plus(updatedExpense)
@@ -84,7 +86,7 @@ class UserService(
     fun updatedIncome(updatedIncome:Income, currentIncome:Income) {
         val user = users.stream().filter {
                 u -> u.id == updatedIncome.userId
-        }.findFirst().get()
+        }.findFirst().orElseThrow{ NotFoundException(notFoundMessage) }
         val updatedIncomeList = user.incomeList
             .minus(currentIncome)
             .plus(updatedIncome)
@@ -93,17 +95,17 @@ class UserService(
     fun delete(id:Long){
         val deletedUser = users.stream().filter { u -> u.id == id }
             .findFirst()
-            .get()
+            .orElseThrow{ NotFoundException(notFoundMessage) }
         users = users.minus(deletedUser)
     }
     fun deleteExpense(deletedExpense:Expense) {
         val user = users.stream().filter { u -> u.id == deletedExpense.userId }
-            .findFirst().get()
+            .findFirst().orElseThrow{ NotFoundException(notFoundMessage) }
         user.expenseList = user.expenseList.minus(deletedExpense)
     }
     fun deleteIncome(deletedIncome:Income){
         val user = users.stream().filter { u -> u.id == deletedIncome.userId }
-            .findFirst().get()
+            .findFirst().orElseThrow{ NotFoundException(notFoundMessage) }
         user.incomeList = user.incomeList.minus(deletedIncome)
     }
 }
