@@ -8,7 +8,9 @@
 <h3 align="center">Cashtrack</h3>
 
   <p align="center">
-    DESCRIPTION TO-DO
+    A Kotlin + SpringBoot based application to track expenses with a user database. Implements all the guidelines of an
+    API REST model, using a base CRUD on PostgreSQL.
+    <br />
     <br />
     <a href="https://github.com/P-py/cashtrack"><strong>Explore the docs »</strong></a>
     <br />
@@ -20,8 +22,6 @@
     <a href="https://github.com/P-py/cashtrack/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
-
-
 
 <!-- TABLE OF CONTENTS -->
 <details>
@@ -55,27 +55,32 @@
 [![MIT License][license-shield]][license-url]
 [![LinkedIn][linkedin-shield]][linkedin-url]
 
-[![Kotlin](https://img.shields.io/badge/Kotlin-000000?style=for-the-badge&logo=kotlin&logoColor=white)](https://www.bing.com/search?q=kotlin+docs&cvid=09bf36b937384482bb11751d2fbd9c1a&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIGCAEQRRg8MgYIAhBFGDwyBggDEEUYQTIGCAQQRRhBMgYIBRBFGEEyCAgGEOkHGPxV0gEIMTEzN2owajmoAgCwAgE&FORM=ANAB01&PC=U531)
+[![Kotlin][kotlin-shield]][kotlin-url]
+[![PostgreSQL][postgresql-shield]][postgresql-url]
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
 <!-- GETTING STARTED -->
 ## Getting Started
 
-### NOT AVAILABLE YET
+At the moment the project is running only locally, below you can read a step to step tutorial on how to setup the 
+Database, prerequisites and run the project to test it.
 
 ### Prerequisites
 
-#### NOT AVAILABLE YET
+* [PostgreSQL + pgAdmin (or any other database administration tool)](https://www.postgresql.org/)
+* [Kotlin](https://kotlinlang.org/)
+* [IntelliJ or any other IDE](https://lp.jetbrains.com/intellij-idea-features-promo/?msclkid=ccc09177edfc14a0635df7e85211d254&utm_source=bing&utm_medium=cpc&utm_campaign=AMER_en_BR_IDEA_Branded&utm_term=intellij&utm_content=intellij%20idea)
+* [Git](https://git-scm.com/)
+* [Postman](https://www.postman.com/)
+
+In any directory you want to work on, clone the project: 
+```bash
+git clone https://github.com/P-py/cashtrack.git
+```
 
 ### Installation
 
@@ -97,11 +102,11 @@
 
 - [X] Base CRUD
 - [X] Data persistence
-  - [ ] Config JPA
-    - [ ] Entity mapping
-    - [ ] JPA and PostgreSQL dependencies
-    - [ ] Tests
-  - [ ] Flyway migrations
+  - [X] Config JPA
+    - [X] Entity mapping
+    - [X] JPA and PostgreSQL dependencies
+    - [X] Tests
+  - [X] Flyway migrations
   - [ ] Filtering and ordering
   - [ ] Cache
 - [ ] Security and infrastructure
@@ -128,7 +133,7 @@ If you have a suggestion that would make this better, please fork the repo and c
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+Distributed under the MIT License. See `LICENSE` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -145,8 +150,8 @@ Project Link: [https://github.com/P-py/cashtrack](https://github.com/P-py/cashtr
 ## Acknowledgments
 
 * [Alura Course - Kotlin + Spring Boot](https://www.alura.com.br/formacao-kotlin-spring-boot)
-* []()
-* []()
+* [PostgreSQL Docs](https://www.postgresql.org/docs/) ~ best source to solve any postgres doubts
+* [JPA database integration](https://docs.spring.io/spring-boot/appendix/application-properties/index.html)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -159,3 +164,7 @@ Project Link: [https://github.com/P-py/cashtrack](https://github.com/P-py/cashtr
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://www.linkedin.com/in/pedro-s-3742b7211/
 [product-screenshot]: images/screenshot.png
+[kotlin-shield]:  https://img.shields.io/badge/Kotlin-9E37BA?style=for-the-badge&logo=kotlin&logoColor=white
+[kotlin-url]: https://kotlinlang.org/
+[postgresql-shield]: https://img.shields.io/badge/PostgreSQL-689dc8?style=for-the-badge&logo=postgresql&logoColor=white
+[postgresql-url]: https://www.postgresql.org/
