@@ -7,6 +7,10 @@ import com.pedrosant.cashtrack.mappers.UserMapper
 import com.pedrosant.cashtrack.services.UserService
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -26,8 +30,11 @@ class UserController(
     private val service:UserService,
     ){
     @GetMapping
-    fun getList():List<UserView>{
-        return service.getUsers()
+    fun getList(
+        @PageableDefault(page = 0, size = 10, sort = ["dateCreated"], direction = Sort.Direction.DESC)
+        pageable:Pageable
+    ):Page<UserView>{
+        return service.getUsers(pageable)
     }
     @GetMapping("/{id}")
     fun getById(@PathVariable id:Long):UserView{

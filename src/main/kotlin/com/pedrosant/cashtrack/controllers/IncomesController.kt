@@ -6,6 +6,10 @@ import com.pedrosant.cashtrack.dtos.IncomeView
 import com.pedrosant.cashtrack.services.IncomeService
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.util.UriComponentsBuilder
@@ -23,16 +28,19 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/incomes")
 class IncomesController(private val service:IncomeService){
     @GetMapping
-    fun getList():List<IncomeView>{
-        return service.getIncomes()
+    fun getList(
+        @PageableDefault(page = 0, size = 10, sort = ["dateCreated"], direction = Sort.Direction.DESC)
+        pageable:Pageable
+    ):Page<IncomeView>{
+        return service.getIncomes(pageable)
     }
     @GetMapping("/{id}")
     fun getById(@PathVariable id:Long):IncomeView{
         return service.getIncomeById(id)
     }
     @GetMapping("/byuser/{userId}")
-    fun getByUser(@PathVariable userId:Long):List<IncomeView>{
-        return service.getIncomesByUser(userId)
+    fun getByUser(@PathVariable userId:Long, @RequestParam(required = false) label:String):List<IncomeView>{
+        return service.getIncomesByUser(userId, label)
     }
     @PostMapping
     @Transactional

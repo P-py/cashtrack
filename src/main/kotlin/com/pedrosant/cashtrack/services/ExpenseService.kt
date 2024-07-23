@@ -6,6 +6,8 @@ import com.pedrosant.cashtrack.dtos.ExpenseView
 import com.pedrosant.cashtrack.exceptions.NotFoundException
 import com.pedrosant.cashtrack.mappers.ExpenseMapper
 import com.pedrosant.cashtrack.repository.ExpenseRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
@@ -15,20 +17,19 @@ class ExpenseService(
     private val userService:UserService,
     private val notFoundMessage:String = "Oh, something went wrong! Expense not found!"
     ){
-    fun getExpenses():List<ExpenseView> {
+    fun getExpenses(pageable:Pageable):Page<ExpenseView> {
 //        return expenses.stream().map {
 //            e -> mapper.mapView(e)
 //        }.collect(Collectors.toList())
-        return expensesRepository.findAll().map {
-            e -> mapper.mapView(e)
-        }
+        return expensesRepository.findAll(pageable)
+            .map { e -> mapper.mapView(e) }
     }
     fun getExpenseById(id:Long):ExpenseView {
 //        val result =  expenses.stream().filter { e -> e.id == id }
 //            .findFirst().orElseThrow{ NotFoundException(notFoundMessage) }
         return mapper.mapView(expensesRepository.getReferenceById(id))
     }
-    fun getExpensesByUser(userId:Long):List<ExpenseView> {
+    fun getExpensesByUser(userId:Long, label:String?):List<ExpenseView> {
 //        try {
         runCatching {
             userService.getUserById(userId)
@@ -46,11 +47,15 @@ class ExpenseService(
 //        } catch (e:NotFoundException) {
 //            throw(NotFoundException(notFoundMessage))
 //        }
-        return expensesRepository.findAll().filter {
-            e -> e.userCashtrack.id == userId
-        }.toList().map{
-            e -> mapper.mapView(e)
+        val expensesList = if (label.isNullOrBlank()){
+            expensesRepository.findAll()
+        } else {
+            expensesRepository.findByexpenseLabel(label)
         }
+        return expensesList
+            .filter { e -> e.userCashtrack.id == userId }
+            .toList()
+            .map{ e -> mapper.mapView(e) }
     }
     fun register(newExpense:ExpenseEntry):ExpenseView{
         val newEntry = mapper.mapEntry(newExpense)

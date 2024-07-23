@@ -9,6 +9,8 @@ import com.pedrosant.cashtrack.models.Expense
 import com.pedrosant.cashtrack.models.Income
 import com.pedrosant.cashtrack.models.UserCashtrack
 import com.pedrosant.cashtrack.repository.UserRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException
 import org.springframework.stereotype.Service
 
@@ -18,7 +20,7 @@ class UserService(
     private val mapper:UserMapper,
     private val notFoundMessage:String = "Oh, something went wrong!! User not found!"
     ){
-    fun getUsers():List<UserView>{
+    fun getUsers(pageable:Pageable):Page<UserView>{
 //        return users.stream().map{
 //            u -> mapper.mapView(u)
 //        }.collect(Collectors.toList())
@@ -26,7 +28,7 @@ class UserService(
 //            u -> mapper.mapView(u)
 //        }
         try {
-            return usersRepository.findAll()
+            return usersRepository.findAll(pageable)
                 .map{ u -> mapper.mapView(u) }
         } catch (e:JpaObjectRetrievalFailureException){
             throw(NotFoundException(notFoundMessage))

@@ -6,7 +6,8 @@ import com.pedrosant.cashtrack.dtos.IncomeView
 import com.pedrosant.cashtrack.exceptions.NotFoundException
 import com.pedrosant.cashtrack.mappers.IncomeMapper
 import com.pedrosant.cashtrack.repository.IncomeRepository
-import org.aspectj.weaver.ast.Not
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException
 import org.springframework.stereotype.Service
 
@@ -17,10 +18,12 @@ class IncomeService(
     private val userService:UserService,
     private val notFoundMessage:String = "Oh, something went wrong! Income not found!"
     ){
-    fun getIncomes():List<IncomeView>{
+    fun getIncomes(pageable:Pageable):Page<IncomeView>{
 //        return incomes.stream().map { i -> mapper.mapView(i) }.toList()
         try {
-            return incomesRepository.findAll()
+            // different from the .findAll() default method, using the pageable argument from type
+            // spring.data.domain.Pageable it returns a Page interface
+            return incomesRepository.findAll(pageable)
                 .map { i -> mapper.mapView(i) }
         } catch (e:JpaObjectRetrievalFailureException){
             throw(NotFoundException(notFoundMessage))
@@ -35,7 +38,7 @@ class IncomeService(
             throw(NotFoundException(notFoundMessage))
         }
     }
-    fun getIncomesByUser(userId:Long):List<IncomeView>{
+    fun getIncomesByUser(userId:Long, label:String?):List<IncomeView>{
         try {
             userService.getUserById(userId)
         } catch (e:JpaObjectRetrievalFailureException){
@@ -50,11 +53,15 @@ class IncomeService(
 //        } catch (e:NotFoundException){
 //            throw(NotFoundException(notFoundMessage))
 //        }
-        return incomesRepository.findAll().filter {
-            i -> i.userCashtrack.id == userId
-        }.toList().map {
-            i -> mapper.mapView(i)
+        val incomesList = if (label.isNullOrBlank()){
+            incomesRepository.findAll()
+        } else {
+            incomesRepository.findByincomeLabel(label)
         }
+        return incomesList
+            .filter { i -> i.userCashtrack.id == userId }
+            .toList()
+            .map { i -> mapper.mapView(i) }
     }
     fun register(newIncome:IncomeEntry):IncomeView{
         val new = mapper.mapEntry(newIncome)

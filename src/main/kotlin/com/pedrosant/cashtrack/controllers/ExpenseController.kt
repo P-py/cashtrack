@@ -6,6 +6,10 @@ import com.pedrosant.cashtrack.dtos.ExpenseView
 import com.pedrosant.cashtrack.services.ExpenseService
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -13,18 +17,21 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/expenses")
-class ExpenseController(private val service: ExpenseService){
+class ExpenseController(private val service:ExpenseService){
     @GetMapping
-    fun getList():List<ExpenseView>{
-        return service.getExpenses()
+    fun getList(
+        @PageableDefault(page = 0, size = 10, sort = ["dateCreated"], direction = Sort.Direction.DESC)
+        pageable:Pageable
+    ):Page<ExpenseView>{
+        return service.getExpenses(pageable)
     }
     @GetMapping("/{id}")
     fun getById(@PathVariable id:Long):ExpenseView{
         return service.getExpenseById(id)
     }
     @GetMapping("/byuser/{userId}")
-    fun getByUser(@PathVariable userId:Long):List<ExpenseView>{
-        return service.getExpensesByUser(userId)
+    fun getByUser(@PathVariable userId:Long, @RequestParam(required = false) label:String?):List<ExpenseView>{
+        return service.getExpensesByUser(userId, label)
     }
     @PostMapping
     @Transactional
