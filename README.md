@@ -69,6 +69,9 @@
 At the moment the project is running only locally, below you can read a step to step tutorial on how to setup the 
 Database, prerequisites and run the project to test it.
 
+**NOTE**: The project uses the module `spring-boot-starter-cache` for learning purposes only, that should not be used
+in a production environment. 
+
 ### Prerequisites
 
 * [PostgreSQL + pgAdmin (or any other database administration tool)](https://www.postgresql.org/)

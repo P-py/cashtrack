@@ -3,10 +3,11 @@ package com.pedrosant.cashtrack.controllers
 import com.pedrosant.cashtrack.dtos.UserEntry
 import com.pedrosant.cashtrack.dtos.UserUpdate
 import com.pedrosant.cashtrack.dtos.UserView
-import com.pedrosant.cashtrack.mappers.UserMapper
 import com.pedrosant.cashtrack.services.UserService
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -30,6 +31,7 @@ class UserController(
     private val service:UserService,
     ){
     @GetMapping
+    @Cacheable("users-list")
     fun getList(
         @PageableDefault(page = 0, size = 10, sort = ["dateCreated"], direction = Sort.Direction.DESC)
         pageable:Pageable
@@ -46,6 +48,7 @@ class UserController(
     }
     @PostMapping
     @Transactional
+    @CacheEvict("users-list", allEntries = true)
     fun register(
             @RequestBody @Valid newUser:UserEntry,
             uriBuilder:UriComponentsBuilder
@@ -58,6 +61,7 @@ class UserController(
     }
     @PutMapping
     @Transactional
+    @CacheEvict("users-list", allEntries = true)
     fun update(@RequestBody @Valid updatedUser:UserUpdate):ResponseEntity<UserView>{
         val updateView = service.updateUser(updatedUser)
         return ResponseEntity.ok(updateView)
@@ -65,6 +69,7 @@ class UserController(
     @DeleteMapping("/{id}")
     @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CacheEvict("users-list", allEntries = true)
     fun delete(@PathVariable id:Long){
         service.delete(id)
     }
