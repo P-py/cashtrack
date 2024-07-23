@@ -7,13 +7,11 @@ import java.time.LocalDateTime
 data class Income(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id:Long? = null,
-    val incomeLabel:String,
-    val value:Double,
-    @ManyToOne
+    var incomeLabel:String,
+    var value:Double,
     @Enumerated(value = EnumType.STRING)
-    val type:IncomeType,
+    var type:IncomeType,
     val dateCreated:LocalDateTime = LocalDateTime.now(),
     @ManyToOne
-    @JoinColumn(name = "userId")
-    val userId:Long
+    val userCashtrack:UserCashtrack
 )

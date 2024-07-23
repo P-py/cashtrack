@@ -3,17 +3,17 @@ package com.pedrosant.cashtrack.mappers
 import com.pedrosant.cashtrack.dtos.ExpenseEntry
 import com.pedrosant.cashtrack.dtos.ExpenseView
 import com.pedrosant.cashtrack.models.Expense
-import com.pedrosant.cashtrack.services.ExpenseService
+import com.pedrosant.cashtrack.services.UserService
 import org.springframework.stereotype.Component
 
 @Component
-class ExpenseMapper():Mapper<Expense, ExpenseView, ExpenseEntry> {
+class ExpenseMapper(private val userService:UserService):Mapper<Expense, ExpenseView, ExpenseEntry> {
     override fun mapEntry(e:ExpenseEntry):Expense {
         return Expense(
             expenseLabel = e.expenseLabel,
             value = e.value,
             type = e.type,
-            userId = e.userId
+            userCashtrack = userService.exportUserById(e.userId)
         )
     }
     override fun mapView(c:Expense):ExpenseView {

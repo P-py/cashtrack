@@ -5,6 +5,7 @@ import com.pedrosant.cashtrack.dtos.UserUpdate
 import com.pedrosant.cashtrack.dtos.UserView
 import com.pedrosant.cashtrack.mappers.UserMapper
 import com.pedrosant.cashtrack.services.UserService
+import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -23,7 +24,6 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/users")
 class UserController(
     private val service:UserService,
-    private val mapper:UserMapper
     ){
     @GetMapping
     fun getList():List<UserView>{
@@ -38,6 +38,7 @@ class UserController(
         return service.getBalance(userId)
     }
     @PostMapping
+    @Transactional
     fun register(
             @RequestBody @Valid newUser:UserEntry,
             uriBuilder:UriComponentsBuilder
@@ -49,11 +50,13 @@ class UserController(
         return ResponseEntity.created(uri).body(userView)
     }
     @PutMapping
+    @Transactional
     fun update(@RequestBody @Valid updatedUser:UserUpdate):ResponseEntity<UserView>{
         val updateView = service.updateUser(updatedUser)
         return ResponseEntity.ok(updateView)
     }
     @DeleteMapping("/{id}")
+    @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(@PathVariable id:Long){
         service.delete(id)

@@ -4,6 +4,7 @@ import com.pedrosant.cashtrack.dtos.ExpenseEntry
 import com.pedrosant.cashtrack.dtos.ExpenseUpdate
 import com.pedrosant.cashtrack.dtos.ExpenseView
 import com.pedrosant.cashtrack.services.ExpenseService
+import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -26,6 +27,7 @@ class ExpenseController(private val service: ExpenseService){
         return service.getExpensesByUser(userId)
     }
     @PostMapping
+    @Transactional
     fun register(
             @RequestBody @Valid newExpense:ExpenseEntry,
             uriBuilder:UriComponentsBuilder
@@ -37,12 +39,14 @@ class ExpenseController(private val service: ExpenseService){
         return ResponseEntity.created(uri).body(expenseView)
     }
     @PutMapping
+    @Transactional
     fun update(@RequestBody @Valid updatedExpense:ExpenseUpdate):ResponseEntity<ExpenseView>{
         val updateView = service.update(updatedExpense)
         return ResponseEntity.ok(updateView)
     }
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
     fun delete(@PathVariable id:Long){
         service.delete(id)
     }

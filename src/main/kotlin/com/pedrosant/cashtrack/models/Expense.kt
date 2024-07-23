@@ -7,13 +7,11 @@ import java.time.LocalDateTime
 data class Expense(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id:Long? = null,
-    val expenseLabel:String,
-    val value:Double,
-    @ManyToOne
+    var expenseLabel:String,
+    var value:Double,
     @Enumerated(value = EnumType.STRING)
-    val type:ExpenseType,
+    var type:ExpenseType,
     val dateCreated:LocalDateTime = LocalDateTime.now(),
     @ManyToOne
-    @JoinColumn(name = "userId")
-    val userId:Long
+    val userCashtrack:UserCashtrack
 )

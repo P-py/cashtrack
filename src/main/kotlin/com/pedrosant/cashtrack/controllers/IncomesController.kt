@@ -4,6 +4,7 @@ import com.pedrosant.cashtrack.dtos.IncomeEntry
 import com.pedrosant.cashtrack.dtos.IncomeUpdate
 import com.pedrosant.cashtrack.dtos.IncomeView
 import com.pedrosant.cashtrack.services.IncomeService
+import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -34,6 +35,7 @@ class IncomesController(private val service:IncomeService){
         return service.getIncomesByUser(userId)
     }
     @PostMapping
+    @Transactional
     fun register(
             @RequestBody @Valid newIncome:IncomeEntry,
             uriBuilder:UriComponentsBuilder
@@ -45,10 +47,12 @@ class IncomesController(private val service:IncomeService){
         return ResponseEntity.created(uri).body(createdIncome)
     }
     @PutMapping
+    @Transactional
     fun updated(@RequestBody @Valid updatedIncome:IncomeUpdate):ResponseEntity<IncomeView>{
         val updateView = service.update(updatedIncome)
         return ResponseEntity.ok(updateView)
     }
+    @Transactional
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(@PathVariable id:Long){
