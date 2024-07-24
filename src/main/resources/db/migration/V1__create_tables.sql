@@ -1,4 +1,4 @@
-CREATE TABLE users_cashtrack(
+CREATE TABLE user_cashtrack(
     id SERIAL PRIMARY KEY,
     username VARCHAR(40),
     email VARCHAR(100)
@@ -9,30 +9,30 @@ CREATE TYPE expense_type AS ENUM('MONTHLY_ESSENTIAL', 'ENTERTAINMENT',
 
 CREATE TYPE income_type AS ENUM('SALARY', 'GIFT', 'EXTRA');
 
-CREATE TABLE expenses(
+CREATE TABLE expense(
     id SERIAL PRIMARY KEY,
-    expenseLabel VARCHAR(30) NOT NULL,
+    expense_label VARCHAR(30) NOT NULL,
     value REAL NOT NULL,
     type expense_type NOT NULL,
-    dateCreated TIMESTAMPZ NOT NULL
+    date_created TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
-ALTER TABLE expenses
+ALTER TABLE expense
     ADD COLUMN user_cashtrack_id INT
     CONSTRAINT user_expense_fk_user_id
-    REFERENCES users_cashtrack(id)
+    REFERENCES user_cashtrack(id)
     ON UPDATE CASCADE ON DELETE CASCADE;
 
-CREATE TABLE incomes(
+CREATE TABLE income(
   id SERIAL PRIMARY KEY,
-  incomeLabel VARCHAR(30) NOT NULL,
+  income_label VARCHAR(30) NOT NULL,
   value REAL NOT NULL,
   type income_type NOT NULL,
-  dateCreated TIMESTAMPZ NOT NULL
+  date_created TIMESTAMP WITHOUT TIME ZONE NOT NULL
 );
 
-ALTER TABLE incomes
+ALTER TABLE income
     ADD COLUMN user_cashtrack_id INT
     CONSTRAINT user_income_fk_user_id
-    REFERENCES users_cashtrack(id)
+    REFERENCES user_cashtrack(id)
     ON UPDATE CASCADE ON DELETE CASCADE;

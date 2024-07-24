@@ -50,7 +50,7 @@ class ExpenseService(
         val expensesList = if (label.isNullOrBlank()){
             expensesRepository.findAll()
         } else {
-            expensesRepository.findByexpenseLabel(label)
+            expensesRepository.getByLabel(label)
         }
         return expensesList
             .filter { e -> e.userCashtrack.id == userId }

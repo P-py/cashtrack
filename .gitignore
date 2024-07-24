@@ -2,6 +2,7 @@
 
 target/*
 src/main/resources/application.yaml
+flyway.conf
 
 ### Java ###
 *.class

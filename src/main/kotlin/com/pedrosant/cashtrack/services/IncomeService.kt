@@ -53,10 +53,10 @@ class IncomeService(
 //        } catch (e:NotFoundException){
 //            throw(NotFoundException(notFoundMessage))
 //        }
-        val incomesList = if (label.isNullOrBlank()){
+        val incomesList = if (label.isNullOrEmpty()){
             incomesRepository.findAll()
         } else {
-            incomesRepository.findByincomeLabel(label)
+            incomesRepository.getByLabel(label)
         }
         return incomesList
             .filter { i -> i.userCashtrack.id == userId }

@@ -39,7 +39,7 @@ class IncomesController(private val service:IncomeService){
         return service.getIncomeById(id)
     }
     @GetMapping("/byuser/{userId}")
-    fun getByUser(@PathVariable userId:Long, @RequestParam(required = false) label:String):List<IncomeView>{
+    fun getByUser(@PathVariable userId:Long, @RequestParam(required = false) label:String?):List<IncomeView>{
         return service.getIncomesByUser(userId, label)
     }
     @PostMapping

@@ -33,7 +33,7 @@ class UserController(
     @GetMapping
     @Cacheable("users-list")
     fun getList(
-        @PageableDefault(page = 0, size = 10, sort = ["dateCreated"], direction = Sort.Direction.DESC)
+        @PageableDefault(page = 0, size = 10, sort = ["id"], direction = Sort.Direction.DESC)
         pageable:Pageable
     ):Page<UserView>{
         return service.getUsers(pageable)
