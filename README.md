@@ -72,6 +72,9 @@ Database, prerequisites and run the project to test it.
 **NOTE**: The project uses the module `spring-boot-starter-cache` for learning purposes only, that should not be used
 in a production environment. 
 
+**NOTE**: For learning purposes the project uses the `spring-security` module in a deprecated version that **SHOULD NOT**
+be used in any other production project.
+
 ### Prerequisites
 
 * [PostgreSQL + pgAdmin (or any other database administration tool)](https://www.postgresql.org/)
@@ -110,11 +113,30 @@ git clone https://github.com/P-py/cashtrack.git
     - [X] JPA and PostgreSQL dependencies
     - [X] Tests
   - [X] Flyway migrations
-  - [ ] Filtering and ordering
-  - [ ] Cache
+  - [x] Filtering and ordering
+  - [x] Cache
 - [ ] Security and infrastructure
+  - [X] Http Basic
+  - [ ] Tokens JWT Auth
+  - [ ] Profiles
+  - [ ] Docker
+  - [ ] Deploy
 - [ ] Unit tests and documentation
+  - [ ] Unit tests w/ mockK
+  - [ ] DB integration test
+  - [ ] MockMvc
+  - [ ] Swagger docs
 - [ ] Advanced resources
+  - [ ] Cache server w/ Redis
+  - [ ] Spring Mail application
+  - [ ] Thymeleaf
+  - [ ] Pipelines
+
+#### Upgrades and future
+- [ ] Update search by label
+  - Search engine on the income and expense endpoints `/byuser/[userId]?label=[label]` is not optimized, returning only exact searches.
+- [ ] Update security layer to new spring-boot methods
+- [ ] Code cleaning refactor
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

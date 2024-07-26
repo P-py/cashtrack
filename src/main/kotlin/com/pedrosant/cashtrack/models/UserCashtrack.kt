@@ -13,6 +13,7 @@ data class UserCashtrack(
     var id:Long? = null,
     var username:String,
     var email:String,
+    val password:String,
     @OneToMany(mappedBy = "userCashtrack", cascade = [CascadeType.ALL], orphanRemoval = true)
     var expenseList:List<Expense> = ArrayList(),
     @OneToMany(mappedBy = "userCashtrack", cascade = [CascadeType.ALL], orphanRemoval = true)

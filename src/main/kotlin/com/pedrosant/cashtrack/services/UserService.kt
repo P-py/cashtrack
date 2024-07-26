@@ -12,6 +12,8 @@ import com.pedrosant.cashtrack.repository.UserRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException
+import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 
 @Service
@@ -19,8 +21,8 @@ class UserService(
     private val usersRepository:UserRepository,
     private val mapper:UserMapper,
     private val notFoundMessage:String = "Oh, something went wrong!! User not found!"
-    ){
-    fun getUsers(pageable:Pageable):Page<UserView>{
+    ):UserDetailsService{
+    fun getUsers(pageable:Pageable):Page<UserView> {
 //        return users.stream().map{
 //            u -> mapper.mapView(u)
 //        }.collect(Collectors.toList())
@@ -44,10 +46,10 @@ class UserService(
             throw(NotFoundException(notFoundMessage))
         }
     }
-    fun exportUserById(id:Long):UserCashtrack{
+    fun exportUserById(id:Long):UserCashtrack {
         return usersRepository.getReferenceById(id)
     }
-    fun registerNewUser(newUser:UserEntry):UserView{
+    fun registerNewUser(newUser:UserEntry):UserView {
         val new = mapper.mapEntry(newUser)
 //        new.id = (users.size+1).toLong()
 //        users = users.plus(new)
@@ -67,14 +69,18 @@ class UserService(
 //        }
 //        return totalIncome - totalExpense
         try {
-            val userIncomeList = usersRepository.getReferenceById(userId).incomeList.sumOf { i -> i.value }
-            val userExpenseList = usersRepository.getReferenceById(userId).expenseList.sumOf { i -> i.value }
+            val userIncomeList = usersRepository.getReferenceById(userId)
+                .incomeList
+                .sumOf { i -> i.value }
+            val userExpenseList = usersRepository.getReferenceById(userId)
+                .expenseList
+                .sumOf { i -> i.value }
             return userIncomeList - userExpenseList
         } catch (e:JpaObjectRetrievalFailureException){
             throw(NotFoundException(notFoundMessage))
         }
     }
-    fun addIncome(newIncome:Income, userId:Long){
+    fun addIncome(newIncome:Income, userId:Long) {
 //        val user = users.stream().filter{ u -> u.id == userId }
 //            .findFirst()
 //            .orElseThrow{ NotFoundException(notFoundMessage) }
@@ -82,7 +88,7 @@ class UserService(
 //        user.incomeList = newIncomeList
         usersRepository.getReferenceById(userId).incomeList.plus(newIncome)
     }
-    fun addExpense(newExpense:Expense, userId:Long){
+    fun addExpense(newExpense:Expense, userId:Long) {
 //        val user = users.stream().filter{ u -> u.id == userId }
 //            .findFirst()
 //            .orElseThrow{ NotFoundException(notFoundMessage) }
@@ -90,7 +96,7 @@ class UserService(
 //        user.expenseList = newExpenseList
         usersRepository.getReferenceById(userId).expenseList.plus(newExpense)
     }
-    fun updateUser(updatedUser:UserUpdate):UserView{
+    fun updateUser(updatedUser:UserUpdate):UserView {
 //        val current = users.stream().filter {
 //            u -> u.id == updatedUser.userId
 //        }.findFirst().orElseThrow{ NotFoundException(notFoundMessage) }
@@ -111,7 +117,7 @@ class UserService(
             throw(NotFoundException(notFoundMessage))
         }
     }
-    fun updateExpense(updatedExpense:Expense, currentExpense:Expense){
+    fun updateExpense(updatedExpense:Expense, currentExpense:Expense) {
 //        val user = users.stream().filter {
 //            u -> u.id == updatedExpense.userId
 //        }.findFirst().orElseThrow{ NotFoundException(notFoundMessage) }
@@ -143,7 +149,7 @@ class UserService(
             user.incomeList.minus(currentIncome).plus(updatedIncome)
         }
     }
-    fun delete(id:Long){
+    fun delete(id:Long) {
 //        val deletedUser = users.stream().filter { u -> u.id == id }
 //            .findFirst()
 //            .orElseThrow{ NotFoundException(notFoundMessage) }
@@ -166,7 +172,7 @@ class UserService(
             user.expenseList.minus(deletedExpense)
         }
     }
-    fun deleteIncome(deletedIncome:Income){
+    fun deleteIncome(deletedIncome:Income) {
 //        val user = users.stream().filter { u -> u.id == deletedIncome.userId }
 //            .findFirst().orElseThrow{ NotFoundException(notFoundMessage) }
 //        user.incomeList = user.incomeList.minus(deletedIncome)
@@ -176,5 +182,8 @@ class UserService(
             val user = usersRepository.getReferenceById(deletedIncome.userCashtrack.id!!)
             user.incomeList.minus(deletedIncome)
         }
+    }
+    override fun loadUserByUsername(username:String?):UserDetails {
+        usersRepository.findByEmail(username)?: throw RuntimeException()
     }
 }
