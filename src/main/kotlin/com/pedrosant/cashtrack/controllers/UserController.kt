@@ -3,6 +3,7 @@ package com.pedrosant.cashtrack.controllers
 import com.pedrosant.cashtrack.dtos.UserEntry
 import com.pedrosant.cashtrack.dtos.UserUpdate
 import com.pedrosant.cashtrack.dtos.UserView
+import com.pedrosant.cashtrack.services.CustomUserDetailsService
 import com.pedrosant.cashtrack.services.UserService
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
@@ -14,6 +15,8 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -38,12 +41,20 @@ class UserController(
     ):Page<UserView>{
         return service.getUsers(pageable)
     }
-    @GetMapping("/{id}")
-    fun getById(@PathVariable id:Long):UserView{
+//    @GetMapping("/{id}")
+//    fun getById(@PathVariable id:Long):UserView{
+//        return service.getUserById(id)
+//    }
+    @GetMapping("/account")
+    fun getById(@CookieValue(value = "userId") id:Long):UserView{
         return service.getUserById(id)
     }
-    @GetMapping("/{userId}/balance")
-    fun getBalanceById(@PathVariable userId:Long):Double{
+//    @GetMapping("/{userId}/balance")
+//    fun getBalanceById(@PathVariable userId:Long):Double{
+//        return service.getBalance(userId)
+//    }
+    @GetMapping("/balance")
+    fun getBalanceById(@CookieValue(value = "userId") userId:Long):Double{
         return service.getBalance(userId)
     }
     @PostMapping
@@ -66,11 +77,12 @@ class UserController(
         val updateView = service.updateUser(updatedUser)
         return ResponseEntity.ok(updateView)
     }
-    @DeleteMapping("/{id}")
+//    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete-my-account")
     @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @CacheEvict("users-list", allEntries = true)
-    fun delete(@PathVariable id:Long){
+    fun delete(@CookieValue(value = "userId") id:Long){
         service.delete(id)
     }
 }

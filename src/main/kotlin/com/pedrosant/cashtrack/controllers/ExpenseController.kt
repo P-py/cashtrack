@@ -18,7 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/expenses")
 class ExpenseController(private val service:ExpenseService){
-    @GetMapping
+    @GetMapping("/admin-list")
     fun getList(
         @PageableDefault(page = 0, size = 10, sort = ["dateCreated"], direction = Sort.Direction.DESC)
         pageable:Pageable
@@ -26,11 +26,11 @@ class ExpenseController(private val service:ExpenseService){
         return service.getExpenses(pageable)
     }
     @GetMapping("/{id}")
-    fun getById(@PathVariable id:Long):ExpenseView{
-        return service.getExpenseById(id)
+    fun getById(@PathVariable id:Long, @CookieValue("userId") userId:Long):ExpenseView{
+        return service.getExpenseById(id, userId)
     }
-    @GetMapping("/byuser/{userId}")
-    fun getByUser(@PathVariable userId:Long, @RequestParam(required = false) label:String?):List<ExpenseView>{
+    @GetMapping
+    fun getByUser(@CookieValue("userId") userId:Long, @RequestParam(required = false) label:String?):List<ExpenseView>{
         return service.getExpensesByUser(userId, label)
     }
     @PostMapping
@@ -47,14 +47,17 @@ class ExpenseController(private val service:ExpenseService){
     }
     @PutMapping
     @Transactional
-    fun update(@RequestBody @Valid updatedExpense:ExpenseUpdate):ResponseEntity<ExpenseView>{
-        val updateView = service.update(updatedExpense)
+    fun update(
+        @RequestBody @Valid updatedExpense:ExpenseUpdate,
+        @CookieValue("userId") userId:Long
+    ):ResponseEntity<ExpenseView>{
+        val updateView = service.update(updatedExpense, userId)
         return ResponseEntity.ok(updateView)
     }
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    fun delete(@PathVariable id:Long){
-        service.delete(id)
+    fun delete(@PathVariable id:Long, @CookieValue("userId") userId:Long){
+        service.delete(id, userId)
     }
 }

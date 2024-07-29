@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -27,7 +28,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/incomes")
 class IncomesController(private val service:IncomeService){
-    @GetMapping
+    @GetMapping("/admin-list")
     fun getList(
         @PageableDefault(page = 0, size = 10, sort = ["dateCreated"], direction = Sort.Direction.DESC)
         pageable:Pageable
@@ -35,11 +36,13 @@ class IncomesController(private val service:IncomeService){
         return service.getIncomes(pageable)
     }
     @GetMapping("/{id}")
-    fun getById(@PathVariable id:Long):IncomeView{
-        return service.getIncomeById(id)
+    fun getById(@PathVariable id:Long, @CookieValue(value = "userId") userId:Long):IncomeView{
+        return service.getIncomeById(id, userId)
     }
-    @GetMapping("/byuser/{userId}")
-    fun getByUser(@PathVariable userId:Long, @RequestParam(required = false) label:String?):List<IncomeView>{
+    @GetMapping
+    fun getByUser(@CookieValue(value = "userId") userId:Long,
+                  @RequestParam(required = false) label:String?
+    ):List<IncomeView>{
         return service.getIncomesByUser(userId, label)
     }
     @PostMapping
@@ -56,14 +59,17 @@ class IncomesController(private val service:IncomeService){
     }
     @PutMapping
     @Transactional
-    fun updated(@RequestBody @Valid updatedIncome:IncomeUpdate):ResponseEntity<IncomeView>{
-        val updateView = service.update(updatedIncome)
+    fun updated(
+        @RequestBody @Valid updatedIncome:IncomeUpdate,
+        @CookieValue("userId") userId:Long
+    ):ResponseEntity<IncomeView>{
+        val updateView = service.update(updatedIncome, userId)
         return ResponseEntity.ok(updateView)
     }
     @Transactional
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun delete(@PathVariable id:Long){
-        service.delete(id)
+    fun delete(@PathVariable id:Long, @CookieValue("userId") userId:Long){
+        service.delete(id, userId)
     }
 }

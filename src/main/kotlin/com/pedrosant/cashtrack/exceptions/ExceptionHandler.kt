@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.servlet.resource.NoResourceFoundException
+import kotlin.io.AccessDeniedException
 
 @RestControllerAdvice
 class ExceptionHandler {
@@ -20,6 +21,19 @@ class ExceptionHandler {
         return ErrorView(
             status = HttpStatus.NOT_FOUND.value(),
             error = HttpStatus.NOT_FOUND.name,
+            message = exception.message,
+            path = request.servletPath
+        )
+    }
+    @ExceptionHandler(com.pedrosant.cashtrack.exceptions.AccessDeniedException::class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    fun handleDenied(
+        exception:com.pedrosant.cashtrack.exceptions.AccessDeniedException,
+        request:HttpServletRequest
+    ):ErrorView{
+        return ErrorView(
+            status = HttpStatus.FORBIDDEN.value(),
+            error = HttpStatus.FORBIDDEN.name,
             message = exception.message,
             path = request.servletPath
         )

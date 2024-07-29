@@ -3,6 +3,7 @@ package com.pedrosant.cashtrack.services
 import com.pedrosant.cashtrack.dtos.IncomeEntry
 import com.pedrosant.cashtrack.dtos.IncomeUpdate
 import com.pedrosant.cashtrack.dtos.IncomeView
+import com.pedrosant.cashtrack.exceptions.AccessDeniedException
 import com.pedrosant.cashtrack.exceptions.NotFoundException
 import com.pedrosant.cashtrack.mappers.IncomeMapper
 import com.pedrosant.cashtrack.repository.IncomeRepository
@@ -29,11 +30,16 @@ class IncomeService(
             throw(NotFoundException(notFoundMessage))
         }
     }
-    fun getIncomeById(id:Long):IncomeView{
+    fun getIncomeById(id:Long, userId:Long):IncomeView{
 //        return mapper.mapView(incomes.stream().filter { i -> i.id == id }
 //            .findFirst().orElseThrow{ NotFoundException(notFoundMessage) })
         try {
-            return mapper.mapView(incomesRepository.getReferenceById(id))
+            val income = incomesRepository.getReferenceById(id)
+            if (income.userCashtrack.id == userId){
+                return mapper.mapView(incomesRepository.getReferenceById(id))
+            } else {
+                throw AccessDeniedException("You don't have permission to access this page.")
+            }
         } catch (e:JpaObjectRetrievalFailureException){
             throw(NotFoundException(notFoundMessage))
         }
@@ -71,7 +77,7 @@ class IncomeService(
         incomesRepository.save(new)
         return mapper.mapView(new)
     }
-    fun update(updatedIncome:IncomeUpdate):IncomeView{
+    fun update(updatedIncome:IncomeUpdate, userId:Long):IncomeView{
 //        val current = incomes.stream().filter { i -> i.id == updatedIncome.id }
 //            .findFirst()
 //            .orElseThrow{ NotFoundException(notFoundMessage) }
@@ -86,15 +92,17 @@ class IncomeService(
 //        userService.updatedIncome(update, current)
         try {
             val update = incomesRepository.getReferenceById(updatedIncome.id)
-            update.incomeLabel = updatedIncome.incomeLabel
-            update.value = updatedIncome.value
-            update.type = updatedIncome.type
-            return mapper.mapView(update)
+            if (update.userCashtrack.id == userId){
+                update.incomeLabel = updatedIncome.incomeLabel
+                update.value = updatedIncome.value
+                update.type = updatedIncome.type
+                return mapper.mapView(update)
+            } else throw AccessDeniedException("You don't have permission to access this page.")
         } catch (e:JpaObjectRetrievalFailureException){
             throw(NotFoundException(notFoundMessage))
         }
     }
-    fun delete(id:Long){
+    fun delete(id:Long, userId: Long){
 //        val deletedIncome = incomes.stream().filter { i -> i.id == id }
 //            .findFirst()
 //            .orElseThrow{ NotFoundException(notFoundMessage) }
@@ -102,7 +110,9 @@ class IncomeService(
 //        userService.deleteIncome(deletedIncome)
         try {
             val deletedIncome = incomesRepository.getReferenceById(id)
-            incomesRepository.delete(deletedIncome)
+            if (deletedIncome.userCashtrack.id == userId){
+                incomesRepository.delete(deletedIncome)
+            } else throw AccessDeniedException("You don't have access to this page.")
         } catch (e:JpaObjectRetrievalFailureException){
             throw(NotFoundException("You can't delete a user that does not exist!"))
         }

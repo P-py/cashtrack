@@ -3,12 +3,15 @@ package com.pedrosant.cashtrack.services
 import com.pedrosant.cashtrack.dtos.ExpenseEntry
 import com.pedrosant.cashtrack.dtos.ExpenseUpdate
 import com.pedrosant.cashtrack.dtos.ExpenseView
+import com.pedrosant.cashtrack.exceptions.AccessDeniedException
 import com.pedrosant.cashtrack.exceptions.NotFoundException
 import com.pedrosant.cashtrack.mappers.ExpenseMapper
 import com.pedrosant.cashtrack.repository.ExpenseRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.orm.jpa.JpaObjectRetrievalFailureException
 import org.springframework.stereotype.Service
+import kotlin.math.exp
 
 @Service
 class ExpenseService(
@@ -24,10 +27,19 @@ class ExpenseService(
         return expensesRepository.findAll(pageable)
             .map { e -> mapper.mapView(e) }
     }
-    fun getExpenseById(id:Long):ExpenseView {
+    fun getExpenseById(id:Long, userId:Long):ExpenseView {
 //        val result =  expenses.stream().filter { e -> e.id == id }
 //            .findFirst().orElseThrow{ NotFoundException(notFoundMessage) }
-        return mapper.mapView(expensesRepository.getReferenceById(id))
+        try {
+            val expense = expensesRepository.getReferenceById(id)
+            if (expense.userCashtrack.id == userId){
+                return mapper.mapView(expensesRepository.getReferenceById(id))
+            } else {
+                throw AccessDeniedException("You don't have permission to access this page.")
+            }
+        } catch (e: JpaObjectRetrievalFailureException){
+            throw(NotFoundException(notFoundMessage))
+        }
     }
     fun getExpensesByUser(userId:Long, label:String?):List<ExpenseView> {
 //        try {
@@ -65,7 +77,7 @@ class ExpenseService(
         expensesRepository.save(newEntry)
         return mapper.mapView(newEntry)
     }
-    fun update(updatedExpense:ExpenseUpdate):ExpenseView{
+    fun update(updatedExpense:ExpenseUpdate, userId:Long):ExpenseView{
 //        val current = expenses.stream().filter{ e -> e.id == updatedExpense.id }
 //            .findFirst()
 //            .orElseThrow{ NotFoundException(notFoundMessage) }
@@ -77,19 +89,31 @@ class ExpenseService(
 //            user = userService.exportUserById(current.user.id)
 //        )
 //        expenses = expenses.minus(current).plus(update)
-        val update = expensesRepository.getReferenceById(updatedExpense.id)
-        update.expenseLabel = updatedExpense.expenseLabel
-        update.value = updatedExpense.value
-        update.type = updatedExpense.type
-        return mapper.mapView(update)
+        try {
+            val update = expensesRepository.getReferenceById(updatedExpense.id)
+            if (update.userCashtrack.id == userId) {
+                update.expenseLabel = updatedExpense.expenseLabel
+                update.value = updatedExpense.value
+                update.type = updatedExpense.type
+                return mapper.mapView(update)
+            } else throw AccessDeniedException("You don't have permission to access this page.")
+        } catch (e:JpaObjectRetrievalFailureException){
+            throw(NotFoundException(notFoundMessage))
+        }
     }
-    fun delete(id:Long) {
+    fun delete(id:Long, userId:Long) {
 //        val deletedExpense = expenses.stream().filter { e -> e.id == id }
 //            .findFirst()
 //            .orElseThrow{ NotFoundException(notFoundMessage) }
 //        expenses = expenses.minus(deletedExpense)
 //        userService.deleteExpense(deletedExpense)
-        val deletedExpense = expensesRepository.getReferenceById(id)
-        expensesRepository.delete(deletedExpense)
+        try {
+            val deletedExpense = expensesRepository.getReferenceById(id)
+            if (deletedExpense.userCashtrack.id == userId){
+                expensesRepository.delete(deletedExpense)
+            } else throw AccessDeniedException("You don't have access to this page.")
+        } catch (e:JpaObjectRetrievalFailureException){
+            throw(NotFoundException("You can't delete a user that does not exist!"))
+        }
     }
 }

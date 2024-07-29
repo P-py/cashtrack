@@ -12,5 +12,8 @@ data class UserEntry(
     @field:NotEmpty(message = "Username must not be empty.")
     @field:NotBlank(message = "Username must not be blank.")
     @field:Size(min = 3, max = 40, message = "Username size must be between 3 and 40.")
-    val username:String
+    val username:String,
+    @field:NotEmpty(message = "Password must no be empty.")
+    @field:NotBlank(message = "Password must no be blank.")
+    val password:String
 )
