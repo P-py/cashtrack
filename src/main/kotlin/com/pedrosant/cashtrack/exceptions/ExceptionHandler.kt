@@ -25,6 +25,19 @@ class ExceptionHandler {
             path = request.servletPath
         )
     }
+    @ExceptionHandler(UserAlreadyExistsException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun handleAlreadyExists(
+        exception:UserAlreadyExistsException,
+        request:HttpServletRequest
+    ):ErrorView{
+        return ErrorView(
+            status = HttpStatus.BAD_REQUEST.value(),
+            error = HttpStatus.BAD_REQUEST.name,
+            message = exception.message,
+            path = request.servletPath
+        )
+    }
     @ExceptionHandler(com.pedrosant.cashtrack.exceptions.AccessDeniedException::class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     fun handleDenied(

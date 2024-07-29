@@ -88,6 +88,10 @@ In any directory you want to work on, clone the project:
 git clone https://github.com/P-py/cashtrack.git
 ```
 
+### Models
+![](readme_files/database_structure.png)
+![](readme_files/flow_diagram.png)
+
 ### Installation
 
 #### NOT AVAILABLE YET
@@ -97,7 +101,38 @@ git clone https://github.com/P-py/cashtrack.git
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-### NOT AVAILABLE YET
+**First of all, to run the application properly you'll need to set up the `application.yaml`:**
+
+- Enter the `resources` folder using `cd src/main/resources` once you've cloned the repository
+- Create a new `application.yaml` file and start editing it with the following layout:
+  
+  ```yaml
+  spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/cashtrack
+    username: #DATABASE USERNAME HERE#
+    password: #DATABASE PASSWORD HERE#
+  jpa:
+    database: POSTGRESQL
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  flyway:
+    driver-class-name: org.postgresql.Driver
+    locations: db/migration
+    password: #DATABASE PASSWORD HERE#
+    url: jdbc:postgresql://localhost:5432/cashtrack
+    user: #DATABASE USERNAME HERE#
+  jwt:
+  key: #DATABASE USERNAME HERE#
+  access-token-expiration: 3600000 #ms
+  refresh-token-expiration: 86400000 #ms
+  ```
+
+- For testing purposes it is okay to use the passwords and usernames in a hard-coded way, but it's not recommend to do
+such thing in a deployment environment, in that case you should be using [_environment variables_](https://medium.com/chingu/an-introduction-to-environment-variables-and-how-to-use-them-f602f66d15fa) 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -117,8 +152,8 @@ git clone https://github.com/P-py/cashtrack.git
   - [x] Cache
 - [ ] Security and infrastructure
   - [X] Http Basic
-  - [ ] Tokens JWT Auth
-  - [ ] Profiles
+  - [X] Tokens JWT Auth
+  - [x] Profiles
   - [ ] Docker
   - [ ] Deploy
 - [ ] Unit tests and documentation
@@ -177,6 +212,7 @@ Project Link: [https://github.com/P-py/cashtrack](https://github.com/P-py/cashtr
 * [Alura Course - Kotlin + Spring Boot](https://www.alura.com.br/formacao-kotlin-spring-boot)
 * [PostgreSQL Docs](https://www.postgresql.org/docs/) ~ best source to solve any postgres doubts
 * [JPA database integration](https://docs.spring.io/spring-boot/appendix/application-properties/index.html)
+* [Environment variables in IntelliJ](https://www.jetbrains.com/help/objc/add-environment-variables-and-program-arguments.html)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

@@ -4,6 +4,7 @@ import com.pedrosant.cashtrack.dtos.UserEntry
 import com.pedrosant.cashtrack.dtos.UserUpdate
 import com.pedrosant.cashtrack.dtos.UserView
 import com.pedrosant.cashtrack.exceptions.NotFoundException
+import com.pedrosant.cashtrack.exceptions.UserAlreadyExistsException
 import com.pedrosant.cashtrack.mappers.UserMapper
 import com.pedrosant.cashtrack.models.Expense
 import com.pedrosant.cashtrack.models.Income
@@ -11,12 +12,8 @@ import com.pedrosant.cashtrack.models.UserCashtrack
 import com.pedrosant.cashtrack.repository.UserRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.http.HttpStatus
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
-import org.springframework.web.client.HttpClientErrorException
-import org.springframework.web.client.HttpClientErrorException.Forbidden
 
 @Service
 class UserService(
@@ -54,10 +51,12 @@ class UserService(
     }
     fun registerNewUser(newUser:UserEntry):UserView {
         val new = mapper.mapEntry(newUser)
+        if(usersRepository.findByEmail(new.email) == null) {
+            usersRepository.save(new)
+            return mapper.mapView(new)
+        } else throw UserAlreadyExistsException("A user for this e-mail already exists.")
 //        new.id = (users.size+1).toLong()
 //        users = users.plus(new)
-        usersRepository.save(new)
-        return mapper.mapView(new)
     }
     fun getBalance(userId:Long):Double {
 //        var totalIncome = 0.0
