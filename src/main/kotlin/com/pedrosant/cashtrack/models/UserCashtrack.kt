@@ -18,5 +18,6 @@ data class UserCashtrack(
 )
 
 enum class Role {
-    USER, ADMIN
+    USER,
+    ADMIN
 }

@@ -1,4 +1,4 @@
-	package com.pedrosant.cashtrack
+package com.pedrosant.cashtrack
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

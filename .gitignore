@@ -1,7 +1,7 @@
 # Created by https://www.gitignore.io/api/java,gradle,eclipse,intellij
 
 target/*
-src/main/resources/application.yaml
+src/main/resources/application-dev.yaml
 flyway.conf
 
 ### Java ###

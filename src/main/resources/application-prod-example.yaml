@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: ${POSTGRESQL_DATABASE_URL}
+    username: ${POSTGRESQL_DATABASE_USERNAME}
+    password: ${POSTGRESQL_DATABASE_PASSWORD}
+  jpa:
+    database: POSTGRESQL
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  flyway:
+    driver-class-name: org.postgresql.Driver
+    locations: db/migration
+    password: ${POSTGRESQL_DATABASE_PASSWORD}
+    url: ${POSTGRESQL_DATABASE_URL}
+    user: ${POSTGRESQL_DATABASE_USERNAME}
+jwt:
+  key: ${JWT_KEY}
+  access-token-expiration: 3600000 #ms
+  refresh-token-expiration: 86400000 #ms

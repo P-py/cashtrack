@@ -1,11 +1,3 @@
-#spring:
-#  datasource:
-#    driverClassName: org.postgresql.Driver
-#    url: jdbc:postgresql://localhost:5432/cashtrack
-#    username: ${POSTGRES_DATABASE_USERNAME}
-#    password: ${POSTGRES_DATABASE_PASSWORD}
-#  jpa:
-#    database: POSTGRESQL
-#    show-sql: true
-#    hibernate:
-#      ddl-auto: update
+spring:
+  profiles:
+    active: @activatedProperties@
