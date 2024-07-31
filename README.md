@@ -87,10 +87,15 @@ In any directory you want to work on, clone the project:
 ```bash
 git clone https://github.com/P-py/cashtrack.git
 ```
-
 ### Models
-![](readme_files/database_structure.png)
-![](readme_files/flow_diagram.png)
+<details>
+  <summary>Database model</summary>
+  <img src="./readme_files/database_structure.png"/>
+</details>
+<details>
+  <summary>API Dataflow</summary>
+  <img src="./readme_files/flow_diagram.png"/>
+</details>
 
 ### Installation
 
@@ -99,7 +104,7 @@ git clone https://github.com/P-py/cashtrack.git
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- USAGE EXAMPLES -->
-## Usage
+## Usage (Local deploy)
 
 **First of all, to run the application properly you'll need to set up the `application.yaml`:**
 
