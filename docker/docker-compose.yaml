@@ -1,0 +1,29 @@
+services:
+  db:
+    container_name: postgresql_container
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD= #POSTGRES PASSWORD HERE#
+      - POSTGRES_DB= #DATABASE NAME HERE#
+      - POSTGRES_USER= #DATABASE USERNAME HERE#
+    volumes:
+      - postgres-container-data:/var/lib/postgresql/data
+  backend:
+    image: cashtrack
+    container_name: cashtrack_app
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    environment:
+      - POSTGRESQL_DATABASE_URL=jdbc:postgresql://db:5432/ #DATABASE NAME HERE#
+      # SHOULD BE LIKE 
+      # jdbc:postgresql://db:5432/cashtrack
+      - POSTGRESQL_DATABASE_USERNAME= # DATABASE USERNAME HERE #
+      - POSTGRESQL_DATABASE_PASSWORD= # DATABASE PASSWORD HERE #
+      - JWT_KEY= # JWT SECRET KEY HERE #
+
+volumes:
+  postgres-container-data:

@@ -26,7 +26,7 @@ class SecurityConfiguration(
                 it
                     .requestMatchers("/auth", "/error")
                     .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/users/", "/expenses/admin-list", "/incomes/admin-list")
+                    .requestMatchers(HttpMethod.GET, "/users", "/expenses/admin-list", "/incomes/admin-list")
                     .hasRole("ADMIN")
                     .requestMatchers(
                         HttpMethod.GET,

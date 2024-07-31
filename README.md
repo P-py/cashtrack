@@ -12,10 +12,10 @@
     API REST model, using a base CRUD on PostgreSQL.
     <br />
     <br />
-    <a href="https://github.com/P-py/cashtrack"><strong>Explore the docs »</strong></a>
+    <a href="./docs/DOCS.md"><strong>EXPLORE THE DETAILED DOCS >></strong></a>
     <br />
     <br />
-    <a href="https://github.com/P-py/cashtrack">View Demo</a>
+    <a href="https://cashtrack-deploy-production.up.railway.app">View Demo</a>
     ·
     <a href="https://github.com/P-py/cashtrack/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
     ·
@@ -57,6 +57,7 @@
 
 [![Kotlin][kotlin-shield]][kotlin-url]
 [![PostgreSQL][postgresql-shield]][postgresql-url]
+[![Spring][spring-shield]][spring-url]
 
 [![Product Name Screen Shot][product-screenshot]](https://example.com)
 
@@ -82,6 +83,8 @@ be used in any other production project.
 * [IntelliJ or any other IDE](https://lp.jetbrains.com/intellij-idea-features-promo/?msclkid=ccc09177edfc14a0635df7e85211d254&utm_source=bing&utm_medium=cpc&utm_campaign=AMER_en_BR_IDEA_Branded&utm_term=intellij&utm_content=intellij%20idea)
 * [Git](https://git-scm.com/)
 * [Postman](https://www.postman.com/)
+* JDK version 21 or up
+* Kotlin version 2.0
 
 In any directory you want to work on, clone the project: 
 ```bash
@@ -99,14 +102,34 @@ git clone https://github.com/P-py/cashtrack.git
 
 ### Installation
 
-#### NOT AVAILABLE YET
+_I do recommend you using IntelliJ for running, modifying and setting up this project locally, also you could use Postman for endpoints testing._
+* [Postman](https://www.postman.com/)
+* [IntelliJ or any other IDE](https://lp.jetbrains.com/intellij-idea-features-promo/?msclkid=ccc09177edfc14a0635df7e85211d254&utm_source=bing&utm_medium=cpc&utm_campaign=AMER_en_BR_IDEA_Branded&utm_term=intellij&utm_content=intellij%20idea)
+
+**Recommended installation steps:**
+1. Start by instally Docker if you are on linux or Docker Desktop if you are on Windows.
+    ```bash
+    sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    ```
+    [`https://www.docker.com/products/docker-desktop/`](https://www.docker.com/products/docker-desktop/)
+
+2. Test your docker docker installation
+    ```
+    sudo docker run hello-world
+    ```
+    or 
+    ```
+    docker run hello-world
+    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- USAGE EXAMPLES -->
 ## Usage (Local deploy)
 
-**First of all, to run the application properly you'll need to set up the `application.yaml`:**
+**NOTE**: I do not recommend running the application without Docker Compose, it'll be more complicated, needing more setup steps and you may mess up something being unable to run it.
+
+**1 - First of all, to run the application properly you'll need to set up the `application.yaml` and `docker-compose.yaml`:**
 
 - Enter the `resources` folder using `cd src/main/resources` once you've cloned the repository
 - Create a new `application.yaml` file and start editing it with the following layout:
@@ -136,12 +159,80 @@ git clone https://github.com/P-py/cashtrack.git
   refresh-token-expiration: 86400000 #ms
   ```
 
+- **If you pretend to run it locally WITHOUT DOCKER**: Set up the variables hard-coded
+
+- **If you pretend to run it with DOCKER COMPOSE**: Set up the field as environment variables like shown below
+  - `${POSTGRESQL_DATABASE_URL}`
+  - `${POSTGRESQL_DATABASE_USERNAME}`
+  - `${POSTGRESQL_DATABASE_PASSWORD}`
+  - In this case you should also **SET UP THE DOCKER COMPOSE FILE @ `docker/docker-compose-yaml`**
+
 - For testing purposes it is okay to use the passwords and usernames in a hard-coded way, but it's not recommend to do
-such thing in a deployment environment, in that case you should be using [_environment variables_](https://medium.com/chingu/an-introduction-to-environment-variables-and-how-to-use-them-f602f66d15fa) 
+such thing in a deployment environment, in that case you should be using [_environment variables_](https://medium.com/chingu/an-introduction-to-environment-variables-and-how-to-use-them-f602f66d15fa)
+
+**2 - Turning the application in a .jar to run the docker container**
+
+**NOTE**: For this step to work, you'll need JDK version 21 or up, Maven and Kotlin.
+
+- Open your particular terminal **on the root folder of the project** and run:
+  ```bash
+  mvn package
+  ```
+
+- **Or** Use the IntelliJ maven plugin to run the `mvn package`
+  <details>
+    <summary>Image example</summary>
+    <img src="./readme_files/intellij_maven_package.png"/>
+  </details>
+
+- After the command, if a successfull build was run you should note a `/target` folder with the compiled application.
+  <details>
+    <summary>Image example</summary>
+    <img src="./readme_files/target_example.png"/>
+  </details>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+**3 - Building the docker image locally**
 
+- Open up a terminal (I do recommend WSL terminal to mess with docker):
+
+- Go into the **project root folder** and run:
+  ```bash
+  docker build -t cashtrack -f ./docker/Dockerfile .
+  ```
+  <details>
+    <summary>Image example</summary>
+    <img src="./readme_files/docker_build_example.png"/>
+  </details>
+
+**4 - Composing the multi-docker deploy**
+- Right after the previous command run:
+  ```
+  cd docker
+  docker compose up
+  ```
+
+- Use `docker compose up --force-recreate` and delete all docker volumes if you encounter any postgres authentication errors.
+
+- In case of success you should see logs like the example below
+  <details>
+    <summary>Example 1</summary>
+    <img src="./readme_files/compose_success_1.png"/>
+  </details>
+  <details>
+    <summary>Example 2</summary>
+    <img src="./readme_files/compose_success_2.png"/>
+  </details>
+  <details>
+    <summary>Example 3</summary>
+    <img src="./readme_files/compose_success_3.png"/>
+  </details>
+
+**5 - Testing! (finally)**
+
+- Now, just open up your postman or any other API testing platform and go test your local deploy!
+  ![](./readme_files/test.png)
 
 <!-- ROADMAP -->
 ## Roadmap
@@ -155,12 +246,12 @@ such thing in a deployment environment, in that case you should be using [_envir
   - [X] Flyway migrations
   - [x] Filtering and ordering
   - [x] Cache
-- [ ] Security and infrastructure
+- [x] Security and infrastructure
   - [X] Http Basic
   - [X] Tokens JWT Auth
   - [x] Profiles
-  - [ ] Docker
-  - [ ] Deploy
+  - [X] Docker
+  - [X] Deploy
 - [ ] Unit tests and documentation
   - [ ] Unit tests w/ mockK
   - [ ] DB integration test
@@ -174,9 +265,10 @@ such thing in a deployment environment, in that case you should be using [_envir
 
 #### Upgrades and future
 - [ ] Update search by label
-  - Search engine on the income and expense endpoints `/byuser/[userId]?label=[label]` is not optimized, returning only exact searches.
-- [ ] Update security layer to new spring-boot methods
+  - Search engine on the income and expense endpoints `?label=[label]` is not optimized, returning only exact searches.
+- [ ] Update security layer to new spring-boot methods with cryptography on any field
 - [ ] Code cleaning refactor
+- [ ] Month filtering for expenses, incomes and balance
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -213,6 +305,7 @@ Project Link: [https://github.com/P-py/cashtrack](https://github.com/P-py/cashtr
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
+> View more [@DOCS](docs/DOCS.md#acknowledgements-and-context)
 
 * [Alura Course - Kotlin + Spring Boot](https://www.alura.com.br/formacao-kotlin-spring-boot)
 * [PostgreSQL Docs](https://www.postgresql.org/docs/) ~ best source to solve any postgres doubts
@@ -234,3 +327,5 @@ Project Link: [https://github.com/P-py/cashtrack](https://github.com/P-py/cashtr
 [kotlin-url]: https://kotlinlang.org/
 [postgresql-shield]: https://img.shields.io/badge/PostgreSQL-689dc8?style=for-the-badge&logo=postgresql&logoColor=white
 [postgresql-url]: https://www.postgresql.org/
+[spring-shield]: https://img.shields.io/badge/Spring-6db33f?style=for-the-badge&logo=spring&logoColor=white
+[spring-url]: https://spring.io/projects/spring-boot

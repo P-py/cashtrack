@@ -22,7 +22,4 @@ class CustomUserDetailsService(
             .password(this.password)
             .roles(this.role.name)
             .build()
-
-    fun UserDetails.getId():Long =
-        usersRepository.findByEmail(this.username)?.id ?: throw RuntimeException("User not found!")
 }
