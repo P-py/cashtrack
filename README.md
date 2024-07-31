@@ -34,11 +34,17 @@
       <a href="#getting-started">Getting Started</a>
       <ul>
         <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#models">Models</a></li>
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#usage-local-deploy">Usage (local deploy)</a></li>
+    <li>
+      <a href="#roadmap">Roadmap</a>
+      <ul>
+        <li><a href="#upgrades-and-future">Upgrades and future</a></li>
+      </ul>
+    </li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -138,7 +144,8 @@ _I do recommend you using IntelliJ for running, modifying and setting up this pr
   spring:
   datasource:
     driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/cashtrack
+    url: jdbc:postgresql://localhost:5432/ #DATABASE NAME HERE#
+    #SHOULD BE LIKE jdbc:postgresql://localhost:5432/cashtrack
     username: #DATABASE USERNAME HERE#
     password: #DATABASE PASSWORD HERE#
   jpa:
@@ -151,10 +158,11 @@ _I do recommend you using IntelliJ for running, modifying and setting up this pr
     driver-class-name: org.postgresql.Driver
     locations: db/migration
     password: #DATABASE PASSWORD HERE#
-    url: jdbc:postgresql://localhost:5432/cashtrack
+    url: jdbc:postgresql://localhost:5432/ #DATABASE NAHE HERE#
+    #SHOULD BE LIKE jdbc:postgresql://localhost:5432/cashtrack
     user: #DATABASE USERNAME HERE#
   jwt:
-  key: #DATABASE USERNAME HERE#
+  key: #JWT SECRET KEY HERE#
   access-token-expiration: 3600000 #ms
   refresh-token-expiration: 86400000 #ms
   ```
@@ -165,6 +173,7 @@ _I do recommend you using IntelliJ for running, modifying and setting up this pr
   - `${POSTGRESQL_DATABASE_URL}`
   - `${POSTGRESQL_DATABASE_USERNAME}`
   - `${POSTGRESQL_DATABASE_PASSWORD}`
+  - `${JWT_KEY}`
   - In this case you should also **SET UP THE DOCKER COMPOSE FILE @ `docker/docker-compose-yaml`**
 
 - For testing purposes it is okay to use the passwords and usernames in a hard-coded way, but it's not recommend to do
