@@ -8,5 +8,6 @@ data class IncomeView(
     val incomeLabel:String,
     val value:Double,
     val type:IncomeType,
-    val dateCreated:LocalDateTime
+    val dateCreated:LocalDateTime,
+    val lastUpdatedAt:LocalDateTime?
 )

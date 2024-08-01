@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 import kotlin.math.exp
 
 @Service
@@ -95,6 +96,7 @@ class ExpenseService(
                 update.expenseLabel = updatedExpense.expenseLabel
                 update.value = updatedExpense.value
                 update.type = updatedExpense.type
+                update.lastUpdatedAt = LocalDateTime.now()
                 return mapper.mapView(update)
             } else throw AccessDeniedException("You don't have permission to access this page.")
         } catch (e:JpaObjectRetrievalFailureException){

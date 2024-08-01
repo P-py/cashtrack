@@ -8,5 +8,6 @@ data class ExpenseView(
     val expenseLabel:String,
     val value:Double,
     val type:ExpenseType,
-    val dateCreated:LocalDateTime
+    val dateCreated:LocalDateTime,
+    val lastUpdatedAt:LocalDateTime?
 )

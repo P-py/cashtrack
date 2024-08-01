@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service
 @Service
 class UserService(
     private val usersRepository:UserRepository,
-    private val userDetailsService:CustomUserDetailsService,
     private val mapper:UserMapper,
     private val notFoundMessage:String = "Oh, something went wrong!! User not found!"
     ){
@@ -54,7 +53,7 @@ class UserService(
         if(usersRepository.findByEmail(new.email) == null) {
             usersRepository.save(new)
             return mapper.mapView(new)
-        } else throw UserAlreadyExistsException("A user for this e-mail already exists.")
+        } else throw UserAlreadyExistsException("An user for this e-mail already exists.")
 //        new.id = (users.size+1).toLong()
 //        users = users.plus(new)
     }

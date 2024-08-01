@@ -14,7 +14,8 @@ class IncomeMapper(private val userService:UserService):Mapper<Income, IncomeVie
             incomeLabel = c.incomeLabel,
             value = c.value,
             type = c.type,
-            dateCreated = c.dateCreated
+            dateCreated = c.dateCreated,
+            lastUpdatedAt = c.lastUpdatedAt
         )
     }
     override fun mapEntry(e:IncomeEntry):Income {

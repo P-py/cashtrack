@@ -22,7 +22,8 @@ class ExpenseMapper(private val userService:UserService):Mapper<Expense, Expense
             expenseLabel = c.expenseLabel,
             value = c.value,
             type = c.type,
-            dateCreated = c.dateCreated
+            dateCreated = c.dateCreated,
+            lastUpdatedAt = c.lastUpdatedAt
         )
     }
 }
