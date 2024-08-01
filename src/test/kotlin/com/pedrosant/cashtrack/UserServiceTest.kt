@@ -1,7 +1,5 @@
-package com.pedrosant.cashtrack.services
+package com.pedrosant.cashtrack
 
-import com.pedrosant.cashtrack.dtos.UserEntry
-import com.pedrosant.cashtrack.dtos.UserUpdate
 import com.pedrosant.cashtrack.exceptions.NotFoundException
 import com.pedrosant.cashtrack.exceptions.UserAlreadyExistsException
 import com.pedrosant.cashtrack.mappers.UserMapper
@@ -10,12 +8,13 @@ import com.pedrosant.cashtrack.models.UserEntryTest
 import com.pedrosant.cashtrack.models.UserUpdateTest
 import com.pedrosant.cashtrack.models.UserViewTest
 import com.pedrosant.cashtrack.repository.UserRepository
+import com.pedrosant.cashtrack.services.UserService
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import jakarta.persistence.EntityNotFoundException
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable

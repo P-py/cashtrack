@@ -7,6 +7,7 @@ import com.pedrosant.cashtrack.exceptions.AccessDeniedException
 import com.pedrosant.cashtrack.exceptions.NotFoundException
 import com.pedrosant.cashtrack.mappers.ExpenseMapper
 import com.pedrosant.cashtrack.repository.ExpenseRepository
+import org.aspectj.weaver.ast.Not
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException
@@ -25,8 +26,12 @@ class ExpenseService(
 //        return expenses.stream().map {
 //            e -> mapper.mapView(e)
 //        }.collect(Collectors.toList())
-        return expensesRepository.findAll(pageable)
-            .map { e -> mapper.mapView(e) }
+        try {
+            return expensesRepository.findAll(pageable)
+                .map { e -> mapper.mapView(e) }
+        } catch (e:JpaObjectRetrievalFailureException){
+            throw(NotFoundException(notFoundMessage))
+        }
     }
     fun getExpenseById(id:Long, userId:Long):ExpenseView {
 //        val result =  expenses.stream().filter { e -> e.id == id }
@@ -44,9 +49,9 @@ class ExpenseService(
     }
     fun getExpensesByUser(userId:Long, label:String?):List<ExpenseView> {
 //        try {
-        runCatching {
+        try {
             userService.getUserById(userId)
-        }.onFailure {
+        } catch(e:JpaObjectRetrievalFailureException){
             throw(NotFoundException("There is no user for this id!"))
         }
 //        } catch(e:NotFoundException){

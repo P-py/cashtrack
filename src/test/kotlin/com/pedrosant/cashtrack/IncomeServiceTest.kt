@@ -1,15 +1,17 @@
-package com.pedrosant.cashtrack.services
+package com.pedrosant.cashtrack
 
 import com.pedrosant.cashtrack.exceptions.NotFoundException
 import com.pedrosant.cashtrack.mappers.IncomeMapper
 import com.pedrosant.cashtrack.models.*
 import com.pedrosant.cashtrack.repository.IncomeRepository
+import com.pedrosant.cashtrack.services.IncomeService
+import com.pedrosant.cashtrack.services.UserService
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import jakarta.persistence.EntityNotFoundException
 import org.assertj.core.api.AssertionsForClassTypes.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -25,12 +27,13 @@ class IncomeServiceTest {
         every { getReferenceById(any()) } returns IncomeTest.build()
         every { getByLabel(any()) } returns listOf(IncomeTest.build())
         every { save(any()) } returns IncomeTest.build()
+        every { delete(any()) } returns Unit
     }
     private val mockMapper:IncomeMapper = mockk{
         every { mapView(any()) } returns IncomeViewTest.build()
         every { mapEntry(any()) } returns IncomeTest.build()
     }
-    private val mockUserService:UserService = mockk{
+    private val mockUserService: UserService = mockk{
         every { getUserById(any()) } returns UserViewTest.build()
     }
     private val defaultNotFoundMessage = "Oh, something went wrong! Income not found!"
@@ -132,14 +135,20 @@ class IncomeServiceTest {
     }
     @Test
     fun `delete shouldn't have return in case of success`(){
-        incomeService.delete()
-    }
-    @Test
-    fun `delete should throw AccessDeniedException in case of user not permitted by userId`(){
-        TODO()
+        incomeService.delete(1, 1)
+        verify(exactly = 1){ mockIncomesRepository.getReferenceById(any()) }
+        verify(exactly = 1){ mockIncomesRepository.delete(any()) }
     }
     @Test
     fun `delete should throw NotFoundException in case of JpaObjectRetrievalException`(){
-        TODO()
+        every { mockIncomesRepository.getReferenceById(any()) } throws JpaObjectRetrievalFailureException(
+            EntityNotFoundException()
+        )
+        val exception = assertThrows<NotFoundException>{
+            incomeService.delete(1, 1)
+        }
+        assertThat(exception.message).isEqualTo("You can't delete a user that does not exist!")
+        verify(exactly = 1){ mockIncomesRepository.getReferenceById(any()) }
+        verify(exactly = 0){ mockIncomesRepository.delete(any()) }
     }
 }

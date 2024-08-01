@@ -133,6 +133,19 @@ _I do recommend you using IntelliJ for running, modifying and setting up this pr
 <!-- USAGE EXAMPLES -->
 ## Usage (Local deploy)
 
+### Running the unit tests
+
+On the root folder of the project run:
+```bash
+mvn clean test
+```
+
+If the project is complete and compiling as expected, you should see logs like this:
+
+![](readme_files/unit_tests.png)
+
+### Deploy
+
 **NOTE**: I do not recommend running the application without Docker Compose, it'll be more complicated, needing more setup steps and you may mess up something being unable to run it.
 
 **1 - First of all, to run the application properly you'll need to set up the `application.yaml` and `docker-compose.yaml`:**
@@ -262,7 +275,7 @@ such thing in a deployment environment, in that case you should be using [_envir
   - [X] Docker
   - [X] Deploy
 - [ ] Unit tests and documentation
-  - [ ] Unit tests w/ mockK
+  - [x] Unit tests w/ mockK
   - [ ] DB integration test
   - [ ] MockMvc
   - [ ] Swagger docs
