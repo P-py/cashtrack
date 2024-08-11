@@ -276,7 +276,7 @@ such thing in a deployment environment, in that case you should be using [_envir
   - [X] Deploy
 - [ ] Unit tests and documentation
   - [x] Unit tests w/ mockK
-  - [ ] DB integration test
+  - [x] DB integration test
   - [ ] MockMvc
   - [ ] Swagger docs
 - [ ] Advanced resources

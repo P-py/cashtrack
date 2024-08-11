@@ -9,6 +9,7 @@ import io.mockk.awaits
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -51,9 +52,13 @@ class IncomeRepositoryTest {
         }
     }
 
+    @BeforeEach
+    fun setup(){
+        userRepository.save(userMock)
+    }
+
 //    @Test
 //    fun `#getByLabel should return a list of Incomes`(){
-//        userRepository.save(userMock)
 //        incomeRepository.save(incomeMock)
 //        val incomeListReturn = incomeRepository.getByLabel(incomeMock.incomeLabel)
 //
@@ -71,7 +76,6 @@ class IncomeRepositoryTest {
 
     @Test
     fun `#findAll should return a page of Incomes class`(){
-        userRepository.save(userMock)
         incomeRepository.save(incomeMock)
         val incomePageReturn = incomeRepository.findAll(mockPageable)
 
