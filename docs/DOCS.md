@@ -31,11 +31,12 @@ You can view more about the development steps and layers on the [**Roadmap** @ t
 - [x] Turn into a docker compose for local tests 
 - [x] Deploy for public view and test
 - [x] Turn into a complete API REST model and endpoints
-- [ ] Unit tests
+- [x] Unit tests
 - [ ] Swagger documentation
 - [ ] Spring Mail integration
 - [ ] Deployment pipelines
 - [ ] Redis cache server
+- [ ] Create and maintain a changelog
 
 ### Non goals
 Points that are outside the initial project planning and scope

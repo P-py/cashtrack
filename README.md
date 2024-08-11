@@ -291,6 +291,7 @@ such thing in a deployment environment, in that case you should be using [_envir
 - [ ] Update security layer to new spring-boot methods with cryptography on any field
 - [ ] Code cleaning refactor
 - [ ] Month filtering for expenses, incomes and balance
+- [ ] Create a changelog
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

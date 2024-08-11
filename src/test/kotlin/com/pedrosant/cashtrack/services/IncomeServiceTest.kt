@@ -1,11 +1,9 @@
-package com.pedrosant.cashtrack
+package com.pedrosant.cashtrack.services
 
 import com.pedrosant.cashtrack.exceptions.NotFoundException
 import com.pedrosant.cashtrack.mappers.IncomeMapper
 import com.pedrosant.cashtrack.models.*
 import com.pedrosant.cashtrack.repository.IncomeRepository
-import com.pedrosant.cashtrack.services.IncomeService
-import com.pedrosant.cashtrack.services.UserService
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
