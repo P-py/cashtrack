@@ -24,7 +24,13 @@ class SecurityConfiguration(
             .csrf{ it.disable() }
             .authorizeHttpRequests{
                 it
-                    .requestMatchers("/auth", "/error")
+                    .requestMatchers(
+                        "/auth",
+                        "/error",
+                        "/swagger-ui/**",
+                        "/swagger-ui/index.html",
+                        "/v3/api-docs/**"
+                    )
                     .permitAll()
                     .requestMatchers(HttpMethod.GET, "/users", "/expenses/admin-list", "/incomes/admin-list")
                     .hasRole("ADMIN")

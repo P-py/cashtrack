@@ -1,4 +1,4 @@
-package com.pedrosant.cashtrack
+package com.pedrosant.cashtrack.services
 
 import com.pedrosant.cashtrack.exceptions.NotFoundException
 import com.pedrosant.cashtrack.exceptions.UserAlreadyExistsException
@@ -8,7 +8,6 @@ import com.pedrosant.cashtrack.models.UserEntryTest
 import com.pedrosant.cashtrack.models.UserUpdateTest
 import com.pedrosant.cashtrack.models.UserViewTest
 import com.pedrosant.cashtrack.repository.UserRepository
-import com.pedrosant.cashtrack.services.UserService
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

@@ -65,7 +65,7 @@
 [![PostgreSQL][postgresql-shield]][postgresql-url]
 [![Spring][spring-shield]][spring-url]
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+![](./readme_files/swagger_demo.png)
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -253,7 +253,9 @@ such thing in a deployment environment, in that case you should be using [_envir
 
 **5 - Testing! (finally)**
 
-- Now, just open up your postman or any other API testing platform and go test your local deploy!
+- Now, just open up the swagger UI at http://localhost:8080/swagger-ui/index.html#/, your postman or any other API  
+testing platform and go test your local deploy!
+
   ![](./readme_files/test.png)
 
 <!-- ROADMAP -->
@@ -274,11 +276,11 @@ such thing in a deployment environment, in that case you should be using [_envir
   - [x] Profiles
   - [X] Docker
   - [X] Deploy
-- [ ] Unit tests and documentation
+- [x] Unit tests and documentation
   - [x] Unit tests w/ mockK
   - [x] DB integration test
-  - [ ] MockMvc
-  - [ ] Swagger docs
+  - [x] MockMvc
+  - [x] Swagger docs
 - [ ] Advanced resources
   - [ ] Cache server w/ Redis
   - [ ] Spring Mail application

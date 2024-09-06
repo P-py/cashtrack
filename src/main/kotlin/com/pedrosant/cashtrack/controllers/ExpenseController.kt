@@ -4,6 +4,7 @@ import com.pedrosant.cashtrack.dtos.ExpenseEntry
 import com.pedrosant.cashtrack.dtos.ExpenseUpdate
 import com.pedrosant.cashtrack.dtos.ExpenseView
 import com.pedrosant.cashtrack.services.ExpenseService
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
@@ -17,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/expenses")
+@SecurityRequirement(name = "bearerAuth")
 class ExpenseController(private val service:ExpenseService){
     @GetMapping("/admin-list")
     fun getList(

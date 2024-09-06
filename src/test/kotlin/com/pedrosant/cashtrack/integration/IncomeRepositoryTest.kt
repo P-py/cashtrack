@@ -1,15 +1,10 @@
 package com.pedrosant.cashtrack.integration
 
-import com.pedrosant.cashtrack.models.Income
 import com.pedrosant.cashtrack.models.IncomeTest
 import com.pedrosant.cashtrack.models.UserCashtrackTest
 import com.pedrosant.cashtrack.repository.IncomeRepository
 import com.pedrosant.cashtrack.repository.UserRepository
-import io.mockk.awaits
-import io.mockk.every
-import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -52,14 +47,10 @@ class IncomeRepositoryTest {
         }
     }
 
-    @BeforeEach
-    fun setup(){
-        userRepository.save(userMock)
-    }
-
 //    @Test
 //    fun `#getByLabel should return a list of Incomes`(){
 //        incomeRepository.save(incomeMock)
+//        userRepository.save(userMock)
 //        val incomeListReturn = incomeRepository.getByLabel(incomeMock.incomeLabel)
 //
 //        assertThat(incomeListReturn).isNotNull
@@ -76,6 +67,7 @@ class IncomeRepositoryTest {
 
     @Test
     fun `#findAll should return a page of Incomes class`(){
+        userRepository.save(userMock)
         incomeRepository.save(incomeMock)
         val incomePageReturn = incomeRepository.findAll(mockPageable)
 

@@ -4,6 +4,7 @@ import com.pedrosant.cashtrack.dtos.UserEntry
 import com.pedrosant.cashtrack.dtos.UserUpdate
 import com.pedrosant.cashtrack.dtos.UserView
 import com.pedrosant.cashtrack.services.UserService
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.cache.annotation.CacheEvict
@@ -27,6 +28,7 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/users")
+@SecurityRequirement(name = "bearerAuth")
 class UserController(
     private val service:UserService,
     ){

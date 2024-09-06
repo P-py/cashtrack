@@ -4,6 +4,7 @@ import com.pedrosant.cashtrack.dtos.IncomeEntry
 import com.pedrosant.cashtrack.dtos.IncomeUpdate
 import com.pedrosant.cashtrack.dtos.IncomeView
 import com.pedrosant.cashtrack.services.IncomeService
+import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
@@ -27,6 +28,7 @@ import org.springframework.web.util.UriComponentsBuilder
 
 @RestController
 @RequestMapping("/incomes")
+@SecurityRequirement(name = "bearerAuth")
 class IncomesController(private val service:IncomeService){
     @GetMapping("/admin-list")
     fun getList(
