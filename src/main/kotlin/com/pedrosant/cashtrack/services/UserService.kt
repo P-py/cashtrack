@@ -10,6 +10,9 @@ import com.pedrosant.cashtrack.models.Expense
 import com.pedrosant.cashtrack.models.Income
 import com.pedrosant.cashtrack.models.UserCashtrack
 import com.pedrosant.cashtrack.repository.UserRepository
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
+import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException
@@ -20,7 +23,9 @@ class UserService(
     private val usersRepository:UserRepository,
     private val mapper:UserMapper,
     private val notFoundMessage:String = "Oh, something went wrong!! User not found!"
-    ){
+    ) {
+
+    @Cacheable(cacheNames = ["UsersList"], key = "#root.method.name")
     fun getUsers(pageable:Pageable):Page<UserView> {
 //        return users.stream().map{
 //            u -> mapper.mapView(u)
@@ -35,6 +40,8 @@ class UserService(
             throw(NotFoundException(notFoundMessage))
         }
     }
+
+    @Cacheable(cacheNames = ["UserDetails"], key = "#root.method.name")
     fun getUserById(id:Long):UserView {
 //        val result = users.stream().filter{ u -> u.id == id }
 //            .findFirst().orElseThrow{ NotFoundException(notFoundMessage) }
@@ -45,9 +52,12 @@ class UserService(
             throw(NotFoundException(notFoundMessage))
         }
     }
+
     fun exportUserById(id:Long):UserCashtrack {
         return usersRepository.getReferenceById(id)
     }
+
+    @Caching(evict = [CacheEvict("UsersList", allEntries = true), CacheEvict("UserDetails", allEntries = true)])
     fun registerNewUser(newUser:UserEntry):UserView {
         val new = mapper.mapEntry(newUser)
         if(usersRepository.findByEmail(new.email) == null) {
@@ -57,6 +67,8 @@ class UserService(
 //        new.id = (users.size+1).toLong()
 //        users = users.plus(new)
     }
+
+    @Cacheable(cacheNames = ["Balance"], key = "#root.method.name")
     fun getBalance(userId:Long):Double {
 //        var totalIncome = 0.0
 //        var totalExpense = 0.0
@@ -81,6 +93,7 @@ class UserService(
             throw(NotFoundException(notFoundMessage))
         }
     }
+
     fun addIncome(newIncome:Income, userId:Long) {
 //        val user = users.stream().filter{ u -> u.id == userId }
 //            .findFirst()
@@ -89,6 +102,7 @@ class UserService(
 //        user.incomeList = newIncomeList
         usersRepository.getReferenceById(userId).incomeList.plus(newIncome)
     }
+
     fun addExpense(newExpense:Expense, userId:Long) {
 //        val user = users.stream().filter{ u -> u.id == userId }
 //            .findFirst()
@@ -97,6 +111,8 @@ class UserService(
 //        user.expenseList = newExpenseList
         usersRepository.getReferenceById(userId).expenseList.plus(newExpense)
     }
+
+    @Caching(evict = [CacheEvict("UsersList", allEntries = true), CacheEvict("UserDetails", allEntries = true)])
     fun updateUser(updatedUser:UserUpdate):UserView {
 //        val current = users.stream().filter {
 //            u -> u.id == updatedUser.userId
@@ -118,6 +134,7 @@ class UserService(
             throw(NotFoundException(notFoundMessage))
         }
     }
+
     fun updateExpense(updatedExpense:Expense, currentExpense:Expense) {
 //        val user = users.stream().filter {
 //            u -> u.id == updatedExpense.userId
@@ -135,6 +152,7 @@ class UserService(
             user.expenseList.minus(currentExpense).plus(updatedExpense)
         }
     }
+
     fun updateIncome(updatedIncome:Income, currentIncome:Income) {
 //        val user = users.stream().filter {
 //                u -> u.id == updatedIncome.userId
@@ -150,6 +168,8 @@ class UserService(
             user.incomeList.minus(currentIncome).plus(updatedIncome)
         }
     }
+
+    @Caching(evict = [CacheEvict("UsersList", allEntries = true), CacheEvict("UserDetails", allEntries = true)])
     fun delete(id:Long) {
 //        val deletedUser = users.stream().filter { u -> u.id == id }
 //            .findFirst()
@@ -162,6 +182,7 @@ class UserService(
             throw(NotFoundException("You can't delete a user that does not exist!"))
         }
     }
+
     fun deleteExpense(deletedExpense:Expense) {
 //        val user = users.stream().filter { u -> u.id == deletedExpense.userId }
 //            .findFirst().orElseThrow{ NotFoundException(notFoundMessage) }
@@ -173,6 +194,7 @@ class UserService(
             user.expenseList.minus(deletedExpense)
         }
     }
+
     fun deleteIncome(deletedIncome:Income) {
 //        val user = users.stream().filter { u -> u.id == deletedIncome.userId }
 //            .findFirst().orElseThrow{ NotFoundException(notFoundMessage) }

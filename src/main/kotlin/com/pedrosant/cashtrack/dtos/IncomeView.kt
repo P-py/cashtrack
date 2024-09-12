@@ -1,6 +1,7 @@
 package com.pedrosant.cashtrack.dtos
 
 import com.pedrosant.cashtrack.models.IncomeType
+import java.io.Serializable
 import java.time.LocalDateTime
 
 data class IncomeView(
@@ -10,4 +11,4 @@ data class IncomeView(
     val type:IncomeType,
     val dateCreated:LocalDateTime,
     val lastUpdatedAt:LocalDateTime?
-)
+):Serializable

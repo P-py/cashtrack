@@ -29,7 +29,8 @@ class SecurityConfiguration(
                         "/error",
                         "/swagger-ui/**",
                         "/swagger-ui/index.html",
-                        "/v3/api-docs/**"
+                        "/v3/api-docs/**",
+                        "/hello"
                     )
                     .permitAll()
                     .requestMatchers(HttpMethod.GET, "/users", "/expenses/admin-list", "/incomes/admin-list")

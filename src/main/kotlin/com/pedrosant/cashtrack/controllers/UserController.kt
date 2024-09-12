@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
+import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -29,36 +30,28 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/users")
 @SecurityRequirement(name = "bearerAuth")
-class UserController(
-    private val service:UserService,
-    ){
+class UserController(private val service:UserService) {
+
     @GetMapping
-    @Cacheable("users-list")
     fun getList(
         @PageableDefault(page = 0, size = 10, sort = ["id"], direction = Sort.Direction.DESC)
         pageable:Pageable
     ):Page<UserView>{
         return service.getUsers(pageable)
     }
-//    @GetMapping("/{id}")
-//    fun getById(@PathVariable id:Long):UserView{
-//        return service.getUserById(id)
-//    }
+
     @GetMapping("/account")
     fun getById(@CookieValue(value = "userId") id:Long):UserView{
         return service.getUserById(id)
     }
-//    @GetMapping("/{userId}/balance")
-//    fun getBalanceById(@PathVariable userId:Long):Double{
-//        return service.getBalance(userId)
-//    }
+
     @GetMapping("/balance")
     fun getBalanceById(@CookieValue(value = "userId") userId:Long):Double{
         return service.getBalance(userId)
     }
+
     @PostMapping
     @Transactional
-    @CacheEvict("users-list", allEntries = true)
     fun register(
             @RequestBody @Valid newUser:UserEntry,
             uriBuilder:UriComponentsBuilder
@@ -69,18 +62,17 @@ class UserController(
             .toUri()
         return ResponseEntity.created(uri).body(userView)
     }
+
     @PutMapping
     @Transactional
-    @CacheEvict("users-list", allEntries = true)
     fun update(@RequestBody @Valid updatedUser:UserUpdate):ResponseEntity<UserView>{
         val updateView = service.updateUser(updatedUser)
         return ResponseEntity.ok(updateView)
     }
-//    @DeleteMapping("/{id}")
+
     @DeleteMapping("/delete-my-account")
     @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @CacheEvict("users-list", allEntries = true)
     fun delete(@CookieValue(value = "userId") id:Long){
         service.delete(id)
     }

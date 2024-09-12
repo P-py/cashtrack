@@ -7,6 +7,9 @@ import com.pedrosant.cashtrack.services.IncomeService
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
+import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
@@ -29,49 +32,57 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/incomes")
 @SecurityRequirement(name = "bearerAuth")
-class IncomesController(private val service:IncomeService){
+class IncomesController(private val service:IncomeService) {
+
     @GetMapping("/admin-list")
+    @Cacheable(cacheNames = ["Incomes"], key = "#root.method.name")
     fun getList(
         @PageableDefault(page = 0, size = 10, sort = ["dateCreated"], direction = Sort.Direction.DESC)
         pageable:Pageable
-    ):Page<IncomeView>{
+    ):Page<IncomeView> {
         return service.getIncomes(pageable)
     }
+
     @GetMapping("/{id}")
-    fun getById(@PathVariable id:Long, @CookieValue(value = "userId") userId:Long):IncomeView{
+    fun getById(@PathVariable id:Long, @CookieValue(value = "userId") userId:Long):IncomeView {
         return service.getIncomeById(id, userId)
     }
+
     @GetMapping
     fun getByUser(@CookieValue(value = "userId") userId:Long,
                   @RequestParam(required = false) label:String?
-    ):List<IncomeView>{
+    ):List<IncomeView> {
         return service.getIncomesByUser(userId, label)
     }
+
     @PostMapping
     @Transactional
     fun register(
             @RequestBody @Valid newIncome:IncomeEntry,
             uriBuilder:UriComponentsBuilder
-        ):ResponseEntity<IncomeView>{
+        ):ResponseEntity<IncomeView> {
         val createdIncome = service.register(newIncome)
         val uri = uriBuilder.path("/incomes/${createdIncome.id}")
             .build()
             .toUri()
         return ResponseEntity.created(uri).body(createdIncome)
     }
+
     @PutMapping
     @Transactional
     fun updated(
         @RequestBody @Valid updatedIncome:IncomeUpdate,
         @CookieValue("userId") userId:Long
-    ):ResponseEntity<IncomeView>{
+    ):ResponseEntity<IncomeView> {
         val updateView = service.update(updatedIncome, userId)
         return ResponseEntity.ok(updateView)
     }
+
     @Transactional
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun delete(@PathVariable id:Long, @CookieValue("userId") userId:Long){
+    fun delete(@PathVariable id:Long, @CookieValue("userId") userId:Long) {
         service.delete(id, userId)
     }
+
 }

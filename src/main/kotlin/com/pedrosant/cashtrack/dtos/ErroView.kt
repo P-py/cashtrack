@@ -1,5 +1,6 @@
 package com.pedrosant.cashtrack.dtos
 
+import java.io.Serializable
 import java.time.LocalDateTime
 
 data class ErrorView(
@@ -8,4 +9,4 @@ data class ErrorView(
     val error:String,
     val message:String?,
     val path:String
-)
+):Serializable

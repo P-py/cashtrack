@@ -7,13 +7,14 @@ import com.pedrosant.cashtrack.exceptions.AccessDeniedException
 import com.pedrosant.cashtrack.exceptions.NotFoundException
 import com.pedrosant.cashtrack.mappers.ExpenseMapper
 import com.pedrosant.cashtrack.repository.ExpenseRepository
-import org.aspectj.weaver.ast.Not
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
+import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
-import kotlin.math.exp
 
 @Service
 class ExpenseService(
@@ -22,6 +23,8 @@ class ExpenseService(
     private val userService:UserService,
     private val notFoundMessage:String = "Oh, something went wrong! Expense not found!"
     ){
+
+    @Cacheable(cacheNames = ["Expenses"], key = "#root.method.name")
     fun getExpenses(pageable:Pageable):Page<ExpenseView> {
 //        return expenses.stream().map {
 //            e -> mapper.mapView(e)
@@ -33,6 +36,7 @@ class ExpenseService(
             throw(NotFoundException(notFoundMessage))
         }
     }
+
     fun getExpenseById(id:Long, userId:Long):ExpenseView {
 //        val result =  expenses.stream().filter { e -> e.id == id }
 //            .findFirst().orElseThrow{ NotFoundException(notFoundMessage) }
@@ -47,6 +51,8 @@ class ExpenseService(
             throw(NotFoundException(notFoundMessage))
         }
     }
+
+    @Cacheable(cacheNames = ["ExpensesByUser"], key = "#root.method.name")
     fun getExpensesByUser(userId:Long, label:String?):List<ExpenseView> {
 //        try {
         try {
@@ -75,6 +81,10 @@ class ExpenseService(
             .toList()
             .map{ e -> mapper.mapView(e) }
     }
+
+    @Caching(evict = [CacheEvict("Expenses", allEntries = true),
+        CacheEvict("ExpensesByUser", allEntries = true),
+        CacheEvict("Balance", allEntries = true)])
     fun register(newExpense:ExpenseEntry):ExpenseView{
         val newEntry = mapper.mapEntry(newExpense)
 //        newEntry.id = (expenses.size+1).toLong()
@@ -83,6 +93,10 @@ class ExpenseService(
         expensesRepository.save(newEntry)
         return mapper.mapView(newEntry)
     }
+
+    @Caching(evict = [CacheEvict("Expenses", allEntries = true),
+        CacheEvict("ExpensesByUser", allEntries = true),
+        CacheEvict("Balance", allEntries = true)])
     fun update(updatedExpense:ExpenseUpdate, userId:Long):ExpenseView{
 //        val current = expenses.stream().filter{ e -> e.id == updatedExpense.id }
 //            .findFirst()
@@ -108,6 +122,10 @@ class ExpenseService(
             throw(NotFoundException(notFoundMessage))
         }
     }
+
+    @Caching(evict = [CacheEvict("Expenses", allEntries = true),
+        CacheEvict("ExpensesByUser", allEntries = true),
+        CacheEvict("Balance", allEntries = true)])
     fun delete(id:Long, userId:Long) {
 //        val deletedExpense = expenses.stream().filter { e -> e.id == id }
 //            .findFirst()

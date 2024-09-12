@@ -7,6 +7,9 @@ import com.pedrosant.cashtrack.exceptions.AccessDeniedException
 import com.pedrosant.cashtrack.exceptions.NotFoundException
 import com.pedrosant.cashtrack.mappers.IncomeMapper
 import com.pedrosant.cashtrack.repository.IncomeRepository
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.Cacheable
+import org.springframework.cache.annotation.Caching
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException
@@ -20,6 +23,8 @@ class IncomeService(
     private val userService:UserService,
     private val notFoundMessage:String = "Oh, something went wrong! Income not found!"
     ){
+
+    @Cacheable(cacheNames = ["Incomes"], key = "#root.method.name")
     fun getIncomes(pageable:Pageable):Page<IncomeView>{
 //        return incomes.stream().map { i -> mapper.mapView(i) }.toList()
         try {
@@ -31,6 +36,7 @@ class IncomeService(
             throw(NotFoundException(notFoundMessage))
         }
     }
+
     fun getIncomeById(id:Long, userId:Long):IncomeView{
 //        return mapper.mapView(incomes.stream().filter { i -> i.id == id }
 //            .findFirst().orElseThrow{ NotFoundException(notFoundMessage) })
@@ -45,6 +51,8 @@ class IncomeService(
             throw(NotFoundException(notFoundMessage))
         }
     }
+
+    @Cacheable(cacheNames = ["IncomesByUser"], key = "#root.method.name")
     fun getIncomesByUser(userId:Long, label:String?):List<IncomeView>{
         try {
             userService.getUserById(userId)
@@ -70,6 +78,10 @@ class IncomeService(
             .toList()
             .map { i -> mapper.mapView(i) }
     }
+
+    @Caching(evict = [CacheEvict("Incomes", allEntries = true),
+        CacheEvict("IncomesByUser", allEntries = true),
+        CacheEvict("Balance", allEntries = true)])
     fun register(newIncome:IncomeEntry):IncomeView{
         val new = mapper.mapEntry(newIncome)
 //        new.id = (incomes.size+1).toLong()
@@ -78,6 +90,10 @@ class IncomeService(
         incomesRepository.save(new)
         return mapper.mapView(new)
     }
+
+    @Caching(evict = [CacheEvict("Incomes", allEntries = true),
+        CacheEvict("IncomesByUser", allEntries = true),
+        CacheEvict("Balance", allEntries = true)])
     fun update(updatedIncome:IncomeUpdate, userId:Long):IncomeView{
 //        val current = incomes.stream().filter { i -> i.id == updatedIncome.id }
 //            .findFirst()
@@ -104,6 +120,10 @@ class IncomeService(
             throw(NotFoundException(notFoundMessage))
         }
     }
+
+    @Caching(evict = [CacheEvict("Incomes", allEntries = true),
+        CacheEvict("IncomesByUser", allEntries = true),
+        CacheEvict("Balance", allEntries = true)])
     fun delete(id:Long, userId: Long){
 //        val deletedIncome = incomes.stream().filter { i -> i.id == id }
 //            .findFirst()

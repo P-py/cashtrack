@@ -20,6 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder
 @RequestMapping("/expenses")
 @SecurityRequirement(name = "bearerAuth")
 class ExpenseController(private val service:ExpenseService){
+
     @GetMapping("/admin-list")
     fun getList(
         @PageableDefault(page = 0, size = 10, sort = ["dateCreated"], direction = Sort.Direction.DESC)
@@ -27,14 +28,17 @@ class ExpenseController(private val service:ExpenseService){
     ):Page<ExpenseView>{
         return service.getExpenses(pageable)
     }
+
     @GetMapping("/{id}")
     fun getById(@PathVariable id:Long, @CookieValue("userId") userId:Long):ExpenseView{
         return service.getExpenseById(id, userId)
     }
+
     @GetMapping
     fun getByUser(@CookieValue("userId") userId:Long, @RequestParam(required = false) label:String?):List<ExpenseView>{
         return service.getExpensesByUser(userId, label)
     }
+
     @PostMapping
     @Transactional
     fun register(
@@ -47,6 +51,7 @@ class ExpenseController(private val service:ExpenseService){
             .toUri()
         return ResponseEntity.created(uri).body(expenseView)
     }
+
     @PutMapping
     @Transactional
     fun update(
@@ -56,6 +61,7 @@ class ExpenseController(private val service:ExpenseService){
         val updateView = service.update(updatedExpense, userId)
         return ResponseEntity.ok(updateView)
     }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional

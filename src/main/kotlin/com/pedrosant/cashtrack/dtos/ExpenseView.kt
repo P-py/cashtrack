@@ -1,6 +1,7 @@
 package com.pedrosant.cashtrack.dtos
 
 import com.pedrosant.cashtrack.models.ExpenseType
+import java.io.Serializable
 import java.time.LocalDateTime
 
 data class ExpenseView(
@@ -10,4 +11,4 @@ data class ExpenseView(
     val type:ExpenseType,
     val dateCreated:LocalDateTime,
     val lastUpdatedAt:LocalDateTime?
-)
+):Serializable
