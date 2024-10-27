@@ -55,7 +55,7 @@ class ExpenseService(
             tokenService.extractEmail(accessToken.extractTokenValue())
         )?.id ?: throw AccessDeniedException("You don't have permission to access this page.")
         try {
-            userService.getUserById(userId)
+            userService.getUserById(accessToken, userId)
         } catch(e:JpaObjectRetrievalFailureException){
             throw(NotFoundException("There is no user for this id!"))
         }

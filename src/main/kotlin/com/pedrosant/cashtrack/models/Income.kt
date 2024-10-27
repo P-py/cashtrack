@@ -13,6 +13,6 @@ data class Income(
     var type:IncomeType,
     val dateCreated:LocalDateTime = LocalDateTime.now(),
     @ManyToOne
-    val userCashtrack:UserCashtrack,
+    var userCashtrack: UserCashtrack?,
     var lastUpdatedAt:LocalDateTime? = null
 )

@@ -16,7 +16,5 @@ data class IncomeEntry(
     @field:Positive
     val value:Double,
     @field:NotNull(message = "Type must not be empty.")
-    val type:IncomeType,
-    @field:NotNull(message = "User must be identified.")
-    val userId:Long
+    val type:IncomeType
 )

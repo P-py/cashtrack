@@ -38,12 +38,12 @@ class UserService(
     }
 
     @Cacheable(cacheNames = ["UserDetails"], key = "#root.method.name")
-    fun getUserById(accessToken:String):UserView {
+    fun getUserById(accessToken:String, userId:Long?):UserView {
         val id = usersRepository.findByEmail(
             tokenService.extractEmail(accessToken.extractTokenValue())
         )?.id ?: throw AccessDeniedException("You don't have permission to access this page.")
         try {
-            return mapper.mapView(usersRepository.getReferenceById(id))
+            return mapper.mapView(usersRepository.getReferenceById(userId ?: id))
         } catch (e:JpaObjectRetrievalFailureException){
             throw(NotFoundException(notFoundMessage))
         }

@@ -42,7 +42,7 @@ class UserController(private val service:UserService) {
 
     @GetMapping("/account")
     fun getById(@RequestHeader(value = "Authorization") accessToken:String):UserView{
-        return service.getUserById(accessToken)
+        return service.getUserById(accessToken, null)
     }
 
     @GetMapping("/balance")

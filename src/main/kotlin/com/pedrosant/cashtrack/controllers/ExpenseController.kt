@@ -3,8 +3,6 @@ package com.pedrosant.cashtrack.controllers
 import com.pedrosant.cashtrack.dtos.ExpenseEntry
 import com.pedrosant.cashtrack.dtos.ExpenseUpdate
 import com.pedrosant.cashtrack.dtos.ExpenseView
-import com.pedrosant.cashtrack.exceptions.AccessDeniedException
-import com.pedrosant.cashtrack.exceptions.NotFoundException
 import com.pedrosant.cashtrack.repository.UserRepository
 import com.pedrosant.cashtrack.services.ExpenseService
 import com.pedrosant.cashtrack.services.TokenService

@@ -23,7 +23,7 @@ class IncomeMapper(private val userService:UserService):Mapper<Income, IncomeVie
             incomeLabel = e.incomeLabel,
             value = e.value,
             type = e.type,
-            userCashtrack = userService.exportUserById(e.userId)
+            userCashtrack = null
         )
     }
 }
