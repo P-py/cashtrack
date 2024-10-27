@@ -13,6 +13,6 @@ data class Expense(
     var type:ExpenseType,
     val dateCreated:LocalDateTime = LocalDateTime.now(),
     @ManyToOne
-    val userCashtrack:UserCashtrack,
+    var userCashtrack: UserCashtrack?,
     var lastUpdatedAt:LocalDateTime? = null
 )

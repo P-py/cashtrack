@@ -5,6 +5,7 @@ import com.pedrosant.cashtrack.dtos.ExpenseUpdate
 import com.pedrosant.cashtrack.dtos.ExpenseView
 import com.pedrosant.cashtrack.exceptions.AccessDeniedException
 import com.pedrosant.cashtrack.exceptions.NotFoundException
+import com.pedrosant.cashtrack.extensions.extractTokenValue
 import com.pedrosant.cashtrack.mappers.ExpenseMapper
 import com.pedrosant.cashtrack.repository.ExpenseRepository
 import com.pedrosant.cashtrack.repository.UserRepository
@@ -20,7 +21,8 @@ class ExpenseService(
     private val mapper:ExpenseMapper,
     private val userService:UserService,
     private val notFoundMessage:String = "Oh, something went wrong! Expense not found!",
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val tokenService: TokenService
     ){
 
     fun getExpenses(pageable:Pageable):Page<ExpenseView> {
@@ -32,7 +34,10 @@ class ExpenseService(
         }
     }
 
-    fun getExpenseById(id:Long, userId:Long):ExpenseView {
+    fun getExpenseById(id:Long, accessToken:String):ExpenseView {
+        val userId = userRepository.findByEmail(
+            tokenService.extractEmail(accessToken.extractTokenValue())
+        )?.id ?: throw AccessDeniedException("You don't have permission to access this page.")
         try {
             val expense = expensesRepository.getReferenceById(id)
             if (expense.userCashtrack!!.id == userId){
@@ -45,7 +50,10 @@ class ExpenseService(
         }
     }
 
-    fun getExpensesByUser(userId:Long, label:String?):List<ExpenseView> {
+    fun getExpensesByUser(accessToken:String, label:String?):List<ExpenseView> {
+        val userId = userRepository.findByEmail(
+            tokenService.extractEmail(accessToken.extractTokenValue())
+        )?.id ?: throw AccessDeniedException("You don't have permission to access this page.")
         try {
             userService.getUserById(userId)
         } catch(e:JpaObjectRetrievalFailureException){
@@ -61,7 +69,9 @@ class ExpenseService(
             .toList()
             .map{ e -> mapper.mapView(e) }
     }
-    fun register(newExpense:ExpenseEntry, userEmail: String):ExpenseView{
+
+    fun register(newExpense:ExpenseEntry, accessToken: String):ExpenseView{
+        val userEmail = tokenService.extractEmail(accessToken.extractTokenValue())
         val newEntry = mapper.mapEntry(newExpense)
         val user = userRepository.findByEmail(userEmail)
         newEntry.userCashtrack = user
@@ -69,7 +79,10 @@ class ExpenseService(
         return mapper.mapView(newEntry)
     }
 
-    fun update(updatedExpense:ExpenseUpdate, userId:Long):ExpenseView{
+    fun update(updatedExpense:ExpenseUpdate, accessToken: String):ExpenseView{
+        val userId = userRepository.findByEmail(
+            tokenService.extractEmail(accessToken.extractTokenValue())
+        )?.id ?: throw AccessDeniedException("You don't have permission to access this page.")
         try {
             val update = expensesRepository.getReferenceById(updatedExpense.id)
             if (update.userCashtrack!!.id == userId) {
@@ -84,7 +97,10 @@ class ExpenseService(
         }
     }
 
-    fun delete(id:Long, userId:Long) {
+    fun delete(id:Long, accessToken: String) {
+        val userId = userRepository.findByEmail(
+            tokenService.extractEmail(accessToken.extractTokenValue())
+        )?.id ?: throw AccessDeniedException("You don't have permission to access this page.")
         try {
             val deletedExpense = expensesRepository.getReferenceById(id)
             if (deletedExpense.userCashtrack!!.id == userId){

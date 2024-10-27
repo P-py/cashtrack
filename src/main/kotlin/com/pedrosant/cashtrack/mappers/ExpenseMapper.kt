@@ -13,9 +13,10 @@ class ExpenseMapper(private val userService:UserService):Mapper<Expense, Expense
             expenseLabel = e.expenseLabel,
             value = e.value,
             type = e.type,
-            userCashtrack = userService.exportUserById(e.userId)
+            userCashtrack = null
         )
     }
+
     override fun mapView(c:Expense):ExpenseView {
         return ExpenseView(
             id = c.id,

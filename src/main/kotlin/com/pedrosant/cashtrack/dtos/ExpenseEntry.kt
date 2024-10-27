@@ -16,7 +16,5 @@ data class ExpenseEntry(
     @field:Positive(message = "Value must be positive.")
     val value:Double,
     @field:NotNull(message = "Type must not be empty.")
-    val type:ExpenseType,
-    @field:NotNull(message = "User must be identified.")
-    val userId:Long
+    val type:ExpenseType
 )

@@ -3,7 +3,11 @@ package com.pedrosant.cashtrack.controllers
 import com.pedrosant.cashtrack.dtos.ExpenseEntry
 import com.pedrosant.cashtrack.dtos.ExpenseUpdate
 import com.pedrosant.cashtrack.dtos.ExpenseView
+import com.pedrosant.cashtrack.exceptions.AccessDeniedException
+import com.pedrosant.cashtrack.exceptions.NotFoundException
+import com.pedrosant.cashtrack.repository.UserRepository
 import com.pedrosant.cashtrack.services.ExpenseService
+import com.pedrosant.cashtrack.services.TokenService
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
@@ -19,7 +23,11 @@ import org.springframework.web.util.UriComponentsBuilder
 @RestController
 @RequestMapping("/expenses")
 @SecurityRequirement(name = "bearerAuth")
-class ExpenseController(private val service:ExpenseService){
+class ExpenseController(
+    private val service:ExpenseService,
+    private val tokenService: TokenService,
+    private val userRepository: UserRepository
+){
 
     @GetMapping("/admin-list")
     fun getList(
@@ -30,22 +38,26 @@ class ExpenseController(private val service:ExpenseService){
     }
 
     @GetMapping("/{id}")
-    fun getById(@PathVariable id:Long, @CookieValue("userId") userId:Long):ExpenseView{
-        return service.getExpenseById(id, userId)
+    fun getById(@PathVariable id:Long, @RequestHeader("Authorization") accessToken: String):ExpenseView{
+        return service.getExpenseById(id, accessToken)
     }
 
     @GetMapping
-    fun getByUser(@CookieValue("userId") userId:Long, @RequestParam(required = false) label:String?):List<ExpenseView>{
-        return service.getExpensesByUser(userId, label)
+    fun getByUser(
+        @RequestHeader("Authorization") accessToken: String,
+        @RequestParam(required = false
+    ) label:String?):List<ExpenseView> {
+        return service.getExpensesByUser(accessToken, label)
     }
 
     @PostMapping
     @Transactional
     fun register(
             @RequestBody @Valid newExpense:ExpenseEntry,
-            uriBuilder:UriComponentsBuilder
+            uriBuilder:UriComponentsBuilder,
+            @RequestHeader("Authorization") accessToken:String
         ):ResponseEntity<ExpenseView>{
-        val expenseView = service.register(newExpense)
+        val expenseView = service.register(newExpense, accessToken)
         val uri = uriBuilder.path("/expenses/${expenseView.id}")
             .build()
             .toUri()
@@ -56,16 +68,16 @@ class ExpenseController(private val service:ExpenseService){
     @Transactional
     fun update(
         @RequestBody @Valid updatedExpense:ExpenseUpdate,
-        @CookieValue("userId") userId:Long
+        @RequestHeader("Authorization") accessToken: String
     ):ResponseEntity<ExpenseView>{
-        val updateView = service.update(updatedExpense, userId)
+        val updateView = service.update(updatedExpense, accessToken)
         return ResponseEntity.ok(updateView)
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Transactional
-    fun delete(@PathVariable id:Long, @CookieValue("userId") userId:Long){
-        service.delete(id, userId)
+    fun delete(@PathVariable id:Long, @RequestHeader("Authorization") accessToken: String){
+        service.delete(id, accessToken)
     }
 }
