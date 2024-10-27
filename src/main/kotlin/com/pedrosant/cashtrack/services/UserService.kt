@@ -4,8 +4,10 @@ import com.pedrosant.cashtrack.dtos.BalanceView
 import com.pedrosant.cashtrack.dtos.UserEntry
 import com.pedrosant.cashtrack.dtos.UserUpdate
 import com.pedrosant.cashtrack.dtos.UserView
+import com.pedrosant.cashtrack.exceptions.AccessDeniedException
 import com.pedrosant.cashtrack.exceptions.NotFoundException
 import com.pedrosant.cashtrack.exceptions.UserAlreadyExistsException
+import com.pedrosant.cashtrack.extensions.extractTokenValue
 import com.pedrosant.cashtrack.mappers.UserMapper
 import com.pedrosant.cashtrack.models.UserCashtrack
 import com.pedrosant.cashtrack.repository.UserRepository
@@ -21,7 +23,8 @@ import org.springframework.stereotype.Service
 class UserService(
     private val usersRepository:UserRepository,
     private val mapper:UserMapper,
-    private val notFoundMessage:String = "Oh, something went wrong!! User not found!"
+    private val notFoundMessage:String = "Oh, something went wrong!! User not found!",
+    private val tokenService: TokenService
     ) {
 
     @Cacheable(cacheNames = ["UsersList"], key = "#root.method.name")
@@ -35,7 +38,10 @@ class UserService(
     }
 
     @Cacheable(cacheNames = ["UserDetails"], key = "#root.method.name")
-    fun getUserById(id:Long):UserView {
+    fun getUserById(accessToken:String):UserView {
+        val id = usersRepository.findByEmail(
+            tokenService.extractEmail(accessToken.extractTokenValue())
+        )?.id ?: throw AccessDeniedException("You don't have permission to access this page.")
         try {
             return mapper.mapView(usersRepository.getReferenceById(id))
         } catch (e:JpaObjectRetrievalFailureException){
@@ -57,7 +63,10 @@ class UserService(
     }
 
     @Cacheable(cacheNames = ["Balance"], key = "#root.method.name")
-    fun getBalance(userId:Long):BalanceView {
+    fun getBalance(accessToken: String):BalanceView {
+        val userId = usersRepository.findByEmail(
+            tokenService.extractEmail(accessToken.extractTokenValue())
+        )?.id ?: throw AccessDeniedException("You don't have permission to access this page.")
         try {
             val userIncomeList = usersRepository.getReferenceById(userId)
                 .incomeList
@@ -76,9 +85,12 @@ class UserService(
     }
 
     @Caching(evict = [CacheEvict("UsersList", allEntries = true), CacheEvict("UserDetails", allEntries = true)])
-    fun updateUser(updatedUser:UserUpdate):UserView {
+    fun updateUser(updatedUser:UserUpdate, accessToken: String):UserView {
+        val userId = usersRepository.findByEmail(
+            tokenService.extractEmail(accessToken.extractTokenValue())
+        )?.id ?: throw AccessDeniedException("You don't have permission to access this page.")
         try {
-            val update = usersRepository.getReferenceById(updatedUser.userId)
+            val update = usersRepository.getReferenceById(userId)
             update.username = updatedUser.username
             update.email = updatedUser.email
             return mapper.mapView(update)
@@ -88,7 +100,10 @@ class UserService(
     }
 
     @Caching(evict = [CacheEvict("UsersList", allEntries = true), CacheEvict("UserDetails", allEntries = true)])
-    fun delete(id:Long) {
+    fun delete(accessToken: String) {
+        val id = usersRepository.findByEmail(
+            tokenService.extractEmail(accessToken.extractTokenValue())
+        )?.id ?: throw AccessDeniedException("You don't have permission to access this page.")
         try {
             val deletedUser = usersRepository.getReferenceById(id)
             usersRepository.delete(deletedUser)

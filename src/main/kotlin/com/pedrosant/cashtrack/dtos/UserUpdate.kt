@@ -6,8 +6,6 @@ import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
 
 data class UserUpdate(
-    @field:NotNull(message = "Update target user must be specified.")
-    val userId:Long,
     @field:NotEmpty(message = "New username cannot be empty.")
     @field:NotBlank(message = "New username cannot be empty.")
     @field:Size(min = 3, max = 40, message = "Username size must be between 3 and 40 characters.")
